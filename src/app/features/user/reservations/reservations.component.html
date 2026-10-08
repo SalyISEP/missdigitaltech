@@ -1,1 +1,61 @@
-<p>reservations works!</p>
+<section class="reservations-page">
+
+  <div class="page-header">
+    <span class="eyebrow">MDT ACADEMY</span>
+    <h1>Mes réservations</h1>
+  </div>
+
+  <div *ngIf="loading" class="state">
+    Chargement...
+  </div>
+
+  <div *ngIf="error" class="state error">
+    {{ error }}
+  </div>
+
+  <div
+    *ngIf="!loading && !error && reservations.length === 0"
+    class="state"
+  >
+    Vous n'avez encore aucune réservation.
+  </div>
+
+  <div
+    *ngIf="!loading && !error && reservations.length > 0"
+    class="reservations-list"
+  >
+
+    <article
+      class="reservation-card"
+      *ngFor="let reservation of reservations"
+    >
+
+      <h2>
+        {{ reservation.formationTitle }}
+      </h2>
+
+      <p>
+        <strong>Date :</strong>
+        {{ reservation.date | date:'dd/MM/yyyy' }}
+      </p>
+
+      <p *ngIf="reservation.time">
+        <strong>Heure :</strong>
+        {{ reservation.time }}
+      </p>
+
+      <p>
+        <strong>Statut :</strong>
+        {{ reservation.status }}
+      </p>
+
+      <p *ngIf="reservation.notes">
+        <strong>Notes :</strong>
+        {{ reservation.notes }}
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
