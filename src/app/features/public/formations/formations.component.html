@@ -1,1 +1,71 @@
-<p>formations works!</p>
+<section class="formations-page">
+
+  <div class="formations-header">
+    <span class="eyebrow">MDT ACADEMY</span>
+    <h1>Nos formations</h1>
+    <p>
+      Développez vos compétences avec des formations pratiques
+      adaptées aux besoins du numérique.
+    </p>
+  </div>
+
+  <div *ngIf="loading" class="state">
+    Chargement des formations...
+  </div>
+
+  <div *ngIf="error" class="state error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && formations.length === 0" class="state">
+    Aucune formation disponible pour le moment.
+  </div>
+
+  <div *ngIf="!loading && !error && formations.length > 0" class="formations-grid">
+
+    <article
+      class="formation-card"
+      *ngFor="let formation of formations"
+    >
+
+      <div class="formation-image" *ngIf="formation.image">
+        <img
+          [src]="formation.image"
+          [alt]="formation.title"
+        >
+      </div>
+
+      <div class="formation-content">
+
+        <span class="category" *ngIf="formation.category">
+          {{ formation.category }}
+        </span>
+
+        <h2>{{ formation.title }}</h2>
+
+        <p>{{ formation.description }}</p>
+
+        <div class="formation-info">
+          <span *ngIf="formation.duration">
+            {{ formation.duration }}
+          </span>
+
+          <strong>
+            {{ formation.price | number:'1.0-0' }} FCFA
+          </strong>
+        </div>
+
+        <a
+          class="formation-button"
+          [routerLink]="['/formations', formation.id]"
+        >
+          Voir la formation
+        </a>
+
+      </div>
+
+    </article>
+
+  </div>
+
+</section>
