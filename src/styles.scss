@@ -1,1 +1,85 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+:root {
+  --mdt-black: #090909;
+  --mdt-dark: #111111;
+  --mdt-gold: #c9a227;
+  --mdt-gold-light: #e0c45c;
+  --mdt-ivory: #f7f3ea;
+  --mdt-white: #ffffff;
+  --mdt-gray: #777777;
+  --mdt-border: rgba(201, 162, 39, 0.2);
+
+  --font-body: 'DM Sans', sans-serif;
+  --font-title: 'Playfair Display', serif;
+
+  --radius: 14px;
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--mdt-ivory);
+  color: var(--mdt-black);
+  line-height: 1.6;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.section {
+  padding: 100px 0;
+}
+
+.section-title {
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.1;
+}
+
+.gold {
+  color: var(--mdt-gold);
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 28px, 1200px);
+  }
+
+  .section {
+    padding: 70px 0;
+  }
+}
