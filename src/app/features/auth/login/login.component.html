@@ -1,1 +1,42 @@
-<p>login works!</p>
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Connexion</h1>
+    <p>Connectez-vous à votre espace Miss Digital.</p>
+
+    <form (ngSubmit)="submit()">
+      <label for="email">E-mail</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="Votre adresse e-mail"
+        required
+      />
+
+      <label for="password">Mot de passe</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        placeholder="Votre mot de passe"
+        required
+      />
+
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <a routerLink="/forgot-password">Mot de passe oublié ?</a>
+    <p>
+      Pas encore de compte ?
+      <a routerLink="/register">Créer un compte</a>
+    </p>
+  </div>
+</section>

@@ -4,6 +4,22 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class NotificationService {
+  success(message: string): void {
+    console.log('[SUCCESS]', message);
+  }
+
+  error(message: string): void {
+    console.error('[ERROR]', message);
+  }
+
+  info(message: string): void {
+    console.info('[INFO]', message);
+  }
+
+  warning(message: string): void {
+    console.warn('[WARNING]', message);
+  }
+
 
   constructor() { }
 }
