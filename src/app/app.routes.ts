@@ -1,84 +1,81 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
 
   // =========================
-  // SITE PUBLIC
+  // PUBLIC
   // =========================
-
   {
     path: '',
     redirectTo: 'accueil',
     pathMatch: 'full'
   },
-
   {
     path: 'accueil',
     loadComponent: () =>
       import('./features/public/home/home.component')
         .then(m => m.HomeComponent)
   },
-
   {
     path: 'a-propos',
     loadComponent: () =>
       import('./features/public/about/about.component')
         .then(m => m.AboutComponent)
   },
-
   {
     path: 'expertises',
     loadComponent: () =>
       import('./features/public/expertises/expertises.component')
         .then(m => m.ExpertisesComponent)
   },
-
   {
     path: 'portfolio',
     loadComponent: () =>
       import('./features/public/portfolio/portfolio.component')
         .then(m => m.PortfolioComponent)
   },
-
   {
     path: 'fondatrice',
     loadComponent: () =>
       import('./features/public/fondatrice/fondatrice.component')
         .then(m => m.FondatriceComponent)
   },
-
   {
     path: 'contact',
     loadComponent: () =>
       import('./features/public/contact/contact.component')
         .then(m => m.ContactComponent)
   },
-
   {
-    path: 'reserver',
+    path: 'formations',
     loadComponent: () =>
-      import('./features/public/reservation/reservation.component')
-        .then(m => m.ReservationComponent)
+      import('./features/public/formations/formations.component')
+        .then(m => m.FormationsComponent)
+  },
+  {
+    path: 'formations/:slug',
+    loadComponent: () =>
+      import('./features/public/formation-detail/formation-detail.component')
+        .then(m => m.FormationDetailComponent)
   },
 
   // =========================
   // AUTHENTIFICATION
   // =========================
-
   {
     path: 'connexion',
     loadComponent: () =>
       import('./features/auth/login/login.component')
         .then(m => m.LoginComponent)
   },
-
   {
     path: 'inscription',
     loadComponent: () =>
       import('./features/auth/register/register.component')
         .then(m => m.RegisterComponent)
   },
-
   {
     path: 'mot-de-passe-oublie',
     loadComponent: () =>
@@ -87,97 +84,148 @@ export const routes: Routes = [
   },
 
   // =========================
-  // ESPACE UTILISATEUR
+  // ESPACE CLIENT
   // =========================
-
   {
     path: 'espace-client',
-    loadComponent: () =>
-      import('./features/user/dashboard/dashboard.component')
-        .then(m => m.DashboardComponent)
-  },
-
-  {
-    path: 'espace-client/profil',
-    loadComponent: () =>
-      import('./features/user/profile/profile.component')
-        .then(m => m.ProfileComponent)
-  },
-
-  {
-    path: 'espace-client/reservations',
-    loadComponent: () =>
-      import('./features/user/reservations/reservations.component')
-        .then(m => m.ReservationsComponent)
-  },
-
-  {
-    path: 'espace-client/messages',
-    loadComponent: () =>
-      import('./features/user/messages/messages.component')
-        .then(m => m.MessagesComponent)
-  },
-
-  {
-    path: 'espace-client/parametres',
-    loadComponent: () =>
-      import('./features/user/settings/settings.component')
-        .then(m => m.SettingsComponent)
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/user/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'profil',
+        loadComponent: () =>
+          import('./features/user/profile/profile.component')
+            .then(m => m.ProfileComponent)
+      },
+      {
+        path: 'formations',
+        loadComponent: () =>
+          import('./features/user/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'cours',
+        loadComponent: () =>
+          import('./features/user/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/user/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'paiements',
+        loadComponent: () =>
+          import('./features/user/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/user/messages/messages.component')
+            .then(m => m.MessagesComponent)
+      },
+      {
+        path: 'parametres',
+        loadComponent: () =>
+          import('./features/user/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      }
+    ]
   },
 
   // =========================
-  // ADMINISTRATION
+  // ADMIN
   // =========================
-
   {
     path: 'admin',
-    loadComponent: () =>
-      import('./features/admin/dashboard/dashboard.component')
-        .then(m => m.DashboardComponent)
-  },
-
-  {
-    path: 'admin/utilisateurs',
-    loadComponent: () =>
-      import('./features/admin/users/users.component')
-        .then(m => m.UsersComponent)
-  },
-
-  {
-    path: 'admin/reservations',
-    loadComponent: () =>
-      import('./features/admin/reservations/reservations.component')
-        .then(m => m.ReservationsComponent)
-  },
-
-  {
-    path: 'admin/messages',
-    loadComponent: () =>
-      import('./features/admin/messages/messages.component')
-        .then(m => m.MessagesComponent)
-  },
-
-  {
-    path: 'admin/portfolio',
-    loadComponent: () =>
-      import('./features/admin/portfolio/portfolio.component')
-        .then(m => m.PortfolioComponent)
-  },
-
-  {
-    path: 'admin/parametres',
-    loadComponent: () =>
-      import('./features/admin/settings/settings.component')
-        .then(m => m.SettingsComponent)
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'utilisateurs',
+        loadComponent: () =>
+          import('./features/admin/users/users.component')
+            .then(m => m.UsersComponent)
+      },
+      {
+        path: 'formations',
+        loadComponent: () =>
+          import('./features/admin/formations/formations.component')
+            .then(m => m.FormationsComponent)
+      },
+      {
+        path: 'modules',
+        loadComponent: () =>
+          import('./features/admin/modules/modules.component')
+            .then(m => m.ModulesComponent)
+      },
+      {
+        path: 'cours',
+        loadComponent: () =>
+          import('./features/admin/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/admin/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'paiements',
+        loadComponent: () =>
+          import('./features/admin/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/admin/messages/messages.component')
+            .then(m => m.MessagesComponent)
+      },
+      {
+        path: 'portfolio',
+        loadComponent: () =>
+          import('./features/admin/portfolio/portfolio.component')
+            .then(m => m.PortfolioComponent)
+      },
+      {
+        path: 'parametres',
+        loadComponent: () =>
+          import('./features/admin/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      }
+    ]
   },
 
   // =========================
-  // PAGE INEXISTANTE
+  // 404
   // =========================
-
   {
     path: '**',
     redirectTo: 'accueil'
   }
-
 ];
