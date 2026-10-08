@@ -1,145 +1,142 @@
-import { Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthCredentials, RegisterData, User } from '../models/user.model';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { User } from '../models/user.model';
+import { environment } from '../../../environments/environment';
+
+interface JwtResponse {
+  access: string;
+  refresh: string;
+}
+
+interface ApiUser {
+  id: number | string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  email: string;
+  phone?: string;
+  role?: string;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly storageKey = 'mdt_current_user';
-  private readonly usersKey = 'mdt_users';
 
-  readonly currentUser = signal<User | null>(this.loadSession());
-  readonly isAuthenticated = signal<boolean>(this.loadSession() !== null);
+  private readonly api = environment.apiUrl;
+  private readonly accessKey = 'mdt_access_token';
+  private readonly refreshKey = 'mdt_refresh_token';
+  private readonly userKey = 'mdt_user';
 
-  constructor(private router: Router) {}
+  private currentUser: User | null = this.loadUser();
 
-  login(credentials: AuthCredentials): boolean {
-    const users = this.getUsers();
+  constructor(private http: HttpClient) {}
 
-    const user = users.find(
-      u =>
-        u.email.toLowerCase() === credentials.email.toLowerCase() &&
-        u.password === credentials.password
-    );
-
-    if (!user) {
-      return false;
-    }
-
-    const sessionUser: User = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      phone: user.phone
-    };
-
-    this.saveSession(sessionUser);
-    return true;
+  login(credentials: {
+    email: string;
+    password: string;
+  }): Observable<User> {
+    return this.http
+      .post<JwtResponse>(`${this.api}/auth/login/`, credentials)
+      .pipe(
+        tap(tokens => {
+          localStorage.setItem(this.accessKey, tokens.access);
+          localStorage.setItem(this.refreshKey, tokens.refresh);
+        }),
+        switchMap(() => this.loadCurrentUser())
+      );
   }
 
-  register(data: RegisterData): { success: boolean; message: string } {
-    const users = this.getUsers();
-
-    const exists = users.some(
-      u => u.email.toLowerCase() === data.email.toLowerCase()
-    );
-
-    if (exists) {
-      return {
-        success: false,
-        message: 'Cette adresse e-mail est déjà utilisée.'
-      };
-    }
-
-    const newUser = {
-      id: crypto.randomUUID(),
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      email: data.email.trim().toLowerCase(),
+  register(data: RegisterData): Observable<any> {
+    const payload = {
+      email: data.email,
       password: data.password,
-      role: 'client' as const,
-      phone: data.phone?.trim()
+      first_name: data.first_name || data.firstName || '',
+      last_name: data.last_name || data.lastName || '',
+      phone: data.phone || ''
     };
 
-    users.push(newUser);
-    localStorage.setItem(this.usersKey, JSON.stringify(users));
-
-    const { password, ...sessionUser } = newUser;
-    this.saveSession(sessionUser);
-
-    return {
-      success: true,
-      message: 'Compte créé avec succès.'
-    };
+    return this.http.post(`${this.api}/auth/register/`, payload);
   }
 
-  logout(): void {
-    localStorage.removeItem(this.storageKey);
-    this.currentUser.set(null);
-    this.isAuthenticated.set(false);
-    this.router.navigate(['/']);
+  loadCurrentUser(): Observable<User> {
+    return this.http
+      .get<ApiUser>(`${this.api}/users/me/`)
+      .pipe(
+        map(user => this.mapUser(user)),
+        tap(user => {
+          this.currentUser = user;
+          localStorage.setItem(this.userKey, JSON.stringify(user));
+        })
+      );
   }
 
-  isLoggedIn(): boolean {
-    return this.currentUser() !== null;
-  }
-
-  isAdmin(): boolean {
-    return this.currentUser()?.role === 'admin';
+  getCurrentUser(): User | null {
+    return this.currentUser;
   }
 
   getUser(): User | null {
-    return this.currentUser();
+    return this.currentUser;
   }
 
-  requestPasswordReset(email: string): boolean {
-    const users = this.getUsers();
-
-    return users.some(
-      u => u.email.toLowerCase() === email.trim().toLowerCase()
-    );
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.api}/auth/password-reset/`, { email });
   }
 
-  private saveSession(user: User): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(user));
-    this.currentUser.set(user);
-    this.isAuthenticated.set(true);
+  getToken(): string | null {
+    return localStorage.getItem(this.accessKey);
   }
 
-  private loadSession(): User | null {
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      localStorage.removeItem(this.storageKey);
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.accessKey);
+    localStorage.removeItem(this.refreshKey);
+    localStorage.removeItem(this.userKey);
+    this.currentUser = null;
+  }
+
+  private mapUser(user: ApiUser): User {
+    return {
+      id: String(user.id),
+      firstName: user.first_name || '',
+      lastName: user.last_name || '',
+      email: user.email,
+      phone: user.phone || '',
+      role: user.role === 'admin' ? 'admin' : 'client'
+    };
+  }
+
+  private loadUser(): User | null {
+    const stored = localStorage.getItem(this.userKey);
+
+    if (!stored) {
       return null;
     }
-  }
 
-  private getUsers(): Array<User & { password: string }> {
     try {
-      const stored = localStorage.getItem(this.usersKey);
-
-      if (stored) {
-        return JSON.parse(stored);
-      }
-
-      const admin = {
-        id: 'admin-001',
-        firstName: 'Saly',
-        lastName: 'Dieng',
-        email: 'admin@missdigital.tech',
-        password: 'Admin123!',
-        role: 'admin' as const
-      };
-
-      localStorage.setItem(this.usersKey, JSON.stringify([admin]));
-      return [admin];
+      return JSON.parse(stored) as User;
     } catch {
-      return [];
+      localStorage.removeItem(this.userKey);
+      return null;
     }
   }
 }

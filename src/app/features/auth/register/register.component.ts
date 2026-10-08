@@ -19,6 +19,7 @@ export class RegisterComponent {
   password = '';
   confirmPassword = '';
   error = '';
+  loading = false;
 
   constructor(
     private auth: AuthService,
@@ -50,20 +51,37 @@ export class RegisterComponent {
       return;
     }
 
-    const result = this.auth.register({
-      firstName: this.firstName,
-      lastName: this.lastName,
+    this.loading = true;
+
+    this.auth.register({
+      first_name: this.firstName,
+      last_name: this.lastName,
       email: this.email,
       phone: this.phone,
       password: this.password
+    }).subscribe({
+      next: () => {
+        this.loading = false;
+
+        this.notifications.success(
+          'Inscription réussie. Vous pouvez maintenant vous connecter.'
+        );
+
+        this.router.navigate(['/connexion']);
+      },
+      error: error => {
+        this.loading = false;
+
+        if (error?.status === 400) {
+          if (error?.error?.email) {
+            this.error = 'Cette adresse e-mail est déjà utilisée.';
+          } else {
+            this.error = 'Les informations saisies sont invalides.';
+          }
+        } else {
+          this.error = 'Impossible de contacter le serveur.';
+        }
+      }
     });
-
-    if (!result.success) {
-      this.error = result.message;
-      return;
-    }
-
-    this.notifications.success(result.message);
-    this.router.navigate(['/dashboard']);
   }
 }

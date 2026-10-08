@@ -33,24 +33,30 @@ export class LoginComponent {
 
     this.loading = true;
 
-    const success = this.auth.login({
+    this.auth.login({
       email: this.email,
       password: this.password
+    }).subscribe({
+      next: user => {
+        this.loading = false;
+
+        this.notifications.success('Connexion réussie.');
+
+        if (user.role === 'admin') {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
+          this.router.navigate(['/espace-client/dashboard']);
+        }
+      },
+      error: error => {
+        this.loading = false;
+
+        if (error?.status === 401) {
+          this.error = 'E-mail ou mot de passe incorrect.';
+        } else {
+          this.error = 'Impossible de contacter le serveur.';
+        }
+      }
     });
-
-    this.loading = false;
-
-    if (!success) {
-      this.error = 'E-mail ou mot de passe incorrect.';
-      return;
-    }
-
-    this.notifications.success('Connexion réussie.');
-
-    if (this.auth.isAdmin()) {
-      this.router.navigate(['/admin/dashboard']);
-    } else {
-      this.router.navigate(['/dashboard']);
-    }
   }
 }
