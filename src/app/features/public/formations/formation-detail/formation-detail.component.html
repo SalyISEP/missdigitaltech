@@ -1,140 +1,113 @@
-<section class="formation-detail">
+<section class="detail-page">
 
   <div *ngIf="loading" class="state">
-    Chargement de la formation...
+    <div class="loader"></div>
+    <p>Chargement de la formation...</p>
   </div>
 
-  <div *ngIf="error" class="state error">
-    {{ error }}
+  <div *ngIf="error && !formation" class="state error">
+    <h2>{{ error }}</h2>
+    <a routerLink="/formations" class="btn-primary">← Retour aux formations</a>
   </div>
 
-  <ng-container *ngIf="!loading && formation">
+  <ng-container *ngIf="formation">
 
-    <div class="formation-detail-header">
+    <div class="detail-hero">
+      <div class="hero-inner">
+        <a routerLink="/formations" class="back-link">← Toutes les formations</a>
 
-      <div>
-        <span class="eyebrow">MDT ACADEMY</span>
+        <span class="category">{{ formation.category || 'MDT ACADEMY' }}</span>
 
         <h1>{{ formation.title }}</h1>
 
-        <p *ngIf="formation.category">
-          {{ formation.category }}
-        </p>
-      </div>
-
-      <div class="formation-price">
-        {{ formation.price | number:'1.0-0' }} FCFA
-      </div>
-
-    </div>
-
-    <div class="formation-detail-content">
-
-      <div class="formation-description">
-
-        <h2>Présentation</h2>
-
         <p>{{ formation.description }}</p>
 
-        <p *ngIf="formation.duration">
-          <strong>Durée :</strong>
-          {{ formation.duration }}
-        </p>
+        <div class="hero-info">
+          <div>
+            <small>DURÉE</small>
+            <strong>{{ formation.duration || 'À définir' }}</strong>
+          </div>
+
+          <div>
+            <small>INVESTISSEMENT</small>
+            <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong>
+          </div>
+
+          <div>
+            <small>STATUT</small>
+            <strong>{{ formation.available ? 'Disponible' : 'Indisponible' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-container">
+
+      <div class="content">
+        <span class="section-label">MDT ACADEMY</span>
+        <h2>Une formation orientée pratique</h2>
 
         <p>
-          <strong>Disponibilité :</strong>
-          {{ formation.available ? 'Disponible' : 'Indisponible' }}
+          Développez des compétences concrètes grâce à un parcours pensé pour
+          répondre aux besoins actuels du numérique.
         </p>
 
+        <div class="benefits">
+          <div>✓ Approche pratique</div>
+          <div>✓ Accompagnement professionnel</div>
+          <div>✓ Compétences directement applicables</div>
+          <div>✓ Parcours adapté aux objectifs professionnels</div>
+        </div>
       </div>
 
-      <div class="reservation-card">
+      <aside class="reservation-card">
 
-        <h2>Réserver cette formation</h2>
-
-        <div *ngIf="!auth.isLoggedIn()">
-
-          <p>
-            Connectez-vous pour effectuer une réservation.
-          </p>
-
-          <a
-            routerLink="/connexion"
-            class="formation-button"
-          >
-            Se connecter
-          </a>
-
+        <div class="price">
+          <small>INVESTISSEMENT</small>
+          <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong>
         </div>
 
-        <form
-          *ngIf="auth.isLoggedIn()"
-          (ngSubmit)="reserver()"
-        >
+        <div *ngIf="!authService.isLoggedIn()" class="login-required">
+          <h3>Prêt à commencer ?</h3>
+          <p>Connectez-vous pour réserver cette formation.</p>
+          <a routerLink="/login" class="btn-primary full">Se connecter →</a>
+          <a routerLink="/register" class="register-link">Créer mon compte</a>
+        </div>
 
-          <label for="reservationDate">
-            Date
-          </label>
+        <form *ngIf="authService.isLoggedIn()" (ngSubmit)="reserver()">
 
-          <input
-            id="reservationDate"
-            type="date"
-            name="reservationDate"
-            [(ngModel)]="reservationDate"
-            required
-          >
+          <h3>Réserver ma place</h3>
 
-          <label for="reservationTime">
-            Heure
-          </label>
+          <label for="date">Date souhaitée</label>
+          <input id="date" type="date" [(ngModel)]="date" name="date" required>
 
-          <input
-            id="reservationTime"
-            type="time"
-            name="reservationTime"
-            [(ngModel)]="reservationTime"
-          >
+          <label for="time">Heure souhaitée</label>
+          <input id="time" type="time" [(ngModel)]="time" name="time">
 
-          <label for="reservationNotes">
-            Notes
-          </label>
-
+          <label for="notes">Message / précision</label>
           <textarea
-            id="reservationNotes"
-            name="reservationNotes"
-            [(ngModel)]="reservationNotes"
+            id="notes"
+            [(ngModel)]="notes"
+            name="notes"
             rows="4"
-            placeholder="Informations complémentaires..."
+            placeholder="Une précision concernant votre réservation..."
           ></textarea>
 
           <button
             type="submit"
-            class="formation-button"
-            [disabled]="!formation.available"
+            class="btn-primary full"
+            [disabled]="submitting"
           >
-            Réserver
+            {{ submitting ? 'Enregistrement...' : 'Réserver maintenant →' }}
           </button>
+
+          <div *ngIf="success" class="success">{{ success }}</div>
+          <div *ngIf="error" class="form-error">{{ error }}</div>
 
         </form>
 
-        <div
-          *ngIf="reservationMessage"
-          class="success-message"
-        >
-          {{ reservationMessage }}
-        </div>
-
-        <div
-          *ngIf="reservationError"
-          class="error-message"
-        >
-          {{ reservationError }}
-        </div>
-
-      </div>
+      </aside>
 
     </div>
-
   </ng-container>
-
 </section>

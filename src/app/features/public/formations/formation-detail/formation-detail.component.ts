@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Formation, FormationService } from '../../../../core/services/formation.service';
 import { ReservationService } from '../../../../core/services/reservation.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -14,25 +14,20 @@ import { AuthService } from '../../../../core/services/auth.service';
   styleUrl: './formation-detail.component.scss'
 })
 export class FormationDetailComponent implements OnInit {
-
   formation: Formation | null = null;
-
   loading = true;
   error = '';
-
-  reservationMessage = '';
-  reservationError = '';
-
-  reservationDate = '';
-  reservationTime = '10:00';
-  reservationNotes = '';
+  success = '';
+  date = '';
+  time = '';
+  notes = '';
+  submitting = false;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private formationService: FormationService,
     private reservationService: ReservationService,
-    public auth: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -49,8 +44,7 @@ export class FormationDetailComponent implements OnInit {
         this.formation = formation;
         this.loading = false;
       },
-      error: error => {
-        console.error('Erreur formation:', error);
+      error: () => {
         this.error = 'Impossible de charger cette formation.';
         this.loading = false;
       }
@@ -58,39 +52,27 @@ export class FormationDetailComponent implements OnInit {
   }
 
   reserver(): void {
-    this.reservationMessage = '';
-    this.reservationError = '';
+    if (!this.formation || !this.date) return;
 
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/connexion']);
-      return;
-    }
-
-    if (!this.formation) {
-      return;
-    }
-
-    if (!this.reservationDate) {
-      this.reservationError = 'Veuillez choisir une date.';
-      return;
-    }
+    this.submitting = true;
+    this.success = '';
 
     this.reservationService.createReservation({
       formation: this.formation.id,
-      date: this.reservationDate,
-      time: this.reservationTime,
-      notes: this.reservationNotes
+      date: this.date,
+      time: this.time,
+      notes: this.notes
     }).subscribe({
       next: () => {
-        this.reservationMessage =
-          'Votre réservation a été enregistrée avec succès.';
-        this.reservationNotes = '';
+        this.success = 'Votre réservation a été enregistrée avec succès.';
+        this.submitting = false;
+        this.date = '';
+        this.time = '';
+        this.notes = '';
       },
-      error: error => {
-        console.error('Erreur réservation:', error);
-        this.reservationError =
-          error?.error?.detail ||
-          'Impossible d’enregistrer la réservation.';
+      error: () => {
+        this.error = 'Impossible d’enregistrer la réservation.';
+        this.submitting = false;
       }
     });
   }

@@ -57,7 +57,7 @@ export const routes: Routes = [
   {
     path: 'formations/:id',
     loadComponent: () =>
-      import('./features/public/formation-detail/formation-detail.component')
+      import('./features/public/formations/formation-detail/formation-detail.component')
         .then(m => m.FormationDetailComponent)
   },
 

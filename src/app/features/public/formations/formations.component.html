@@ -1,71 +1,52 @@
-<section class="formations-page">
-
-  <div class="formations-header">
-    <span class="eyebrow">MDT ACADEMY</span>
-    <h1>Nos formations</h1>
-    <p>
-      Développez vos compétences avec des formations pratiques
-      adaptées aux besoins du numérique.
-    </p>
+<section class="academy-page">
+  <div class="academy-hero">
+    <div class="hero-content">
+      <span class="eyebrow">MDT ACADEMY</span>
+      <h1>Développez vos compétences.<br><strong>Construisez votre avenir.</strong></h1>
+      <p>Des formations pratiques pensées pour vous permettre de maîtriser les compétences numériques les plus utiles.</p>
+    </div>
   </div>
 
-  <div *ngIf="loading" class="state">
-    Chargement des formations...
-  </div>
-
-  <div *ngIf="error" class="state error">
-    {{ error }}
-  </div>
-
-  <div *ngIf="!loading && !error && formations.length === 0" class="state">
-    Aucune formation disponible pour le moment.
-  </div>
-
-  <div *ngIf="!loading && !error && formations.length > 0" class="formations-grid">
-
-    <article
-      class="formation-card"
-      *ngFor="let formation of formations"
-    >
-
-      <div class="formation-image" *ngIf="formation.image">
-        <img
-          [src]="formation.image"
-          [alt]="formation.title"
-        >
+  <div class="formations-container">
+    <div class="section-heading">
+      <div>
+        <span class="section-label">NOS PROGRAMMES</span>
+        <h2>Choisissez votre formation</h2>
       </div>
+      <p>Apprenez avec des parcours concrets et orientés vers la pratique.</p>
+    </div>
 
-      <div class="formation-content">
+    <div *ngIf="loading" class="state-box">
+      <div class="loader"></div>
+      <p>Chargement des formations...</p>
+    </div>
 
-        <span class="category" *ngIf="formation.category">
-          {{ formation.category }}
-        </span>
+    <div *ngIf="error" class="state-box error">
+      <p>{{ error }}</p>
+      <button class="btn-primary" (click)="loadFormations()">Réessayer</button>
+    </div>
 
-        <h2>{{ formation.title }}</h2>
-
-        <p>{{ formation.description }}</p>
-
-        <div class="formation-info">
-          <span *ngIf="formation.duration">
-            {{ formation.duration }}
-          </span>
-
-          <strong>
-            {{ formation.price | number:'1.0-0' }} FCFA
-          </strong>
+    <div *ngIf="!loading && !error" class="formation-grid">
+      <article class="formation-card" *ngFor="let formation of formations">
+        <div class="card-top">
+          <span class="category">{{ formation.category || 'Formation professionnelle' }}</span>
+          <span class="availability" *ngIf="formation.available">Disponible</span>
         </div>
 
-        <a
-          class="formation-button"
-          [routerLink]="['/formations', formation.id]"
-        >
-          Voir la formation
+        <div class="card-icon">MDT</div>
+
+        <h3>{{ formation.title }}</h3>
+        <p class="description">{{ formation.description }}</p>
+
+        <div class="formation-meta">
+          <span>⏱ {{ formation.duration || 'À définir' }}</span>
+          <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong>
+        </div>
+
+        <a class="btn-primary full" [routerLink]="['/formations', formation.id]">
+          Voir la formation <span>→</span>
         </a>
-
-      </div>
-
-    </article>
-
+      </article>
+    </div>
   </div>
-
 </section>
