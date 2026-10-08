@@ -1,0 +1,140 @@
+<section class="formation-detail">
+
+  <div *ngIf="loading" class="state">
+    Chargement de la formation...
+  </div>
+
+  <div *ngIf="error" class="state error">
+    {{ error }}
+  </div>
+
+  <ng-container *ngIf="!loading && formation">
+
+    <div class="formation-detail-header">
+
+      <div>
+        <span class="eyebrow">MDT ACADEMY</span>
+
+        <h1>{{ formation.title }}</h1>
+
+        <p *ngIf="formation.category">
+          {{ formation.category }}
+        </p>
+      </div>
+
+      <div class="formation-price">
+        {{ formation.price | number:'1.0-0' }} FCFA
+      </div>
+
+    </div>
+
+    <div class="formation-detail-content">
+
+      <div class="formation-description">
+
+        <h2>Présentation</h2>
+
+        <p>{{ formation.description }}</p>
+
+        <p *ngIf="formation.duration">
+          <strong>Durée :</strong>
+          {{ formation.duration }}
+        </p>
+
+        <p>
+          <strong>Disponibilité :</strong>
+          {{ formation.available ? 'Disponible' : 'Indisponible' }}
+        </p>
+
+      </div>
+
+      <div class="reservation-card">
+
+        <h2>Réserver cette formation</h2>
+
+        <div *ngIf="!auth.isLoggedIn()">
+
+          <p>
+            Connectez-vous pour effectuer une réservation.
+          </p>
+
+          <a
+            routerLink="/connexion"
+            class="formation-button"
+          >
+            Se connecter
+          </a>
+
+        </div>
+
+        <form
+          *ngIf="auth.isLoggedIn()"
+          (ngSubmit)="reserver()"
+        >
+
+          <label for="reservationDate">
+            Date
+          </label>
+
+          <input
+            id="reservationDate"
+            type="date"
+            name="reservationDate"
+            [(ngModel)]="reservationDate"
+            required
+          >
+
+          <label for="reservationTime">
+            Heure
+          </label>
+
+          <input
+            id="reservationTime"
+            type="time"
+            name="reservationTime"
+            [(ngModel)]="reservationTime"
+          >
+
+          <label for="reservationNotes">
+            Notes
+          </label>
+
+          <textarea
+            id="reservationNotes"
+            name="reservationNotes"
+            [(ngModel)]="reservationNotes"
+            rows="4"
+            placeholder="Informations complémentaires..."
+          ></textarea>
+
+          <button
+            type="submit"
+            class="formation-button"
+            [disabled]="!formation.available"
+          >
+            Réserver
+          </button>
+
+        </form>
+
+        <div
+          *ngIf="reservationMessage"
+          class="success-message"
+        >
+          {{ reservationMessage }}
+        </div>
+
+        <div
+          *ngIf="reservationError"
+          class="error-message"
+        >
+          {{ reservationError }}
+        </div>
+
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</section>

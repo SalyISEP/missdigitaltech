@@ -1,0 +1,99 @@
+.formation-detail {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.formation-detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.formation-detail-header h1 {
+  margin: 10px 0;
+  font-size: 42px;
+}
+
+.eyebrow {
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.formation-price {
+  font-size: 28px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.formation-detail-content {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 40px;
+}
+
+.formation-description,
+.reservation-card {
+  padding: 30px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+.reservation-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reservation-card input,
+.reservation-card textarea {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.formation-button {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.success-message {
+  margin-top: 20px;
+  padding: 12px;
+}
+
+.error-message {
+  margin-top: 20px;
+  padding: 12px;
+}
+
+.state {
+  padding: 30px;
+  text-align: center;
+}
+
+.error {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .formation-detail-header {
+    flex-direction: column;
+  }
+
+  .formation-detail-header h1 {
+    font-size: 32px;
+  }
+
+  .formation-detail-content {
+    grid-template-columns: 1fr;
+  }
+}
