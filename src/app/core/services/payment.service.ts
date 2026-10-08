@@ -1,38 +1,38 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
-import { Payment } from '../models/payment.model';
+import { environment } from '../../../environments/environment';
+
+export interface Payment {
+  id: number;
+  amount: string;
+  method: string;
+  reference: string;
+  status: string;
+  created_at: string;
+  user: number;
+}
+
+export interface PaymentData {
+  amount: string;
+  method: string;
+  reference?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
-  constructor(private api: ApiService) {}
 
-  getMine(): Observable<Payment[]> {
-    return this.api.get<Payment[]>(
-      'payments/my/'
-    );
+  private readonly api = `${environment.apiUrl}/payments/`;
+
+  constructor(private http: HttpClient) {}
+
+  getPayments(): Observable<Payment[]> {
+    return this.http.get<Payment[]>(this.api);
   }
 
-  getAll(): Observable<Payment[]> {
-    return this.api.get<Payment[]>(
-      'payments/'
-    );
-  }
-
-  create(
-    data: Partial<Payment>
-  ): Observable<Payment> {
-    return this.api.post<Payment>(
-      'payments/',
-      data
-    );
-  }
-
-  getById(id: number): Observable<Payment> {
-    return this.api.get<Payment>(
-      `payments/${id}/`
-    );
+  createPayment(data: PaymentData): Observable<Payment> {
+    return this.http.post<Payment>(this.api, data);
   }
 }

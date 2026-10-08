@@ -1,49 +1,40 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
-import { Reservation } from '../models/reservation.model';
+import { environment } from '../../../environments/environment';
+
+export interface Reservation {
+  id: number;
+  formation: number;
+  formationTitle: string;
+  date: string;
+  time: string | null;
+  notes: string;
+  status: string;
+  created_at: string;
+}
+
+export interface ReservationData {
+  formation: number;
+  date: string;
+  time?: string;
+  notes?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
-  constructor(private api: ApiService) {}
 
-  getMine(): Observable<Reservation[]> {
-    return this.api.get<Reservation[]>(
-      'reservations/my/'
-    );
+  private readonly api = `${environment.apiUrl}/reservations/`;
+
+  constructor(private http: HttpClient) {}
+
+  getReservations(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(this.api);
   }
 
-  getAll(): Observable<Reservation[]> {
-    return this.api.get<Reservation[]>(
-      'reservations/'
-    );
-  }
-
-  create(
-    data: Partial<Reservation>
-  ): Observable<Reservation> {
-    return this.api.post<Reservation>(
-      'reservations/',
-      data
-    );
-  }
-
-  update(
-    id: number,
-    data: Partial<Reservation>
-  ): Observable<Reservation> {
-    return this.api.put<Reservation>(
-      `reservations/${id}/`,
-      data
-    );
-  }
-
-  cancel(id: number): Observable<Reservation> {
-    return this.api.put<Reservation>(
-      `reservations/${id}/`,
-      { status: 'cancelled' }
-    );
+  createReservation(data: ReservationData): Observable<Reservation> {
+    return this.http.post<Reservation>(this.api, data);
   }
 }

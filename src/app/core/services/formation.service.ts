@@ -1,41 +1,34 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { ApiService } from './api.service';
-import { Formation } from '../models/formation.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+export interface Formation {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: string;
+  duration: string;
+  image: string;
+  available: boolean;
+  created_at: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class FormationService {
-  private readonly localKey = 'mdt_formations';
 
-  constructor(private api: ApiService) {}
+  private readonly api = `${environment.apiUrl}/formations/`;
 
-  getAll(): Observable<Formation[]> {
-    return this.api.get<Formation[]>('formations/');
+  constructor(private http: HttpClient) {}
+
+  getFormations(): Observable<Formation[]> {
+    return this.http.get<Formation[]>(this.api);
   }
 
-  getById(id: number): Observable<Formation> {
-    return this.api.get<Formation>(`formations/${id}/`);
-  }
-
-  create(data: Partial<Formation>): Observable<Formation> {
-    return this.api.post<Formation>('formations/', data);
-  }
-
-  update(
-    id: number,
-    data: Partial<Formation>
-  ): Observable<Formation> {
-    return this.api.put<Formation>(
-      `formations/${id}/`,
-      data
-    );
-  }
-
-  delete(id: number): Observable<void> {
-    return this.api.delete<void>(
-      `formations/${id}/`
-    );
+  getFormation(id: number): Observable<Formation> {
+    return this.http.get<Formation>(`${this.api}${id}/`);
   }
 }
