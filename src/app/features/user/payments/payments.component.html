@@ -1,1 +1,26 @@
-<p>payments works!</p>
+<section class="payments-page">
+  <div class="hero">
+    <span>ESPACE CLIENT</span>
+    <h1>Mes paiements</h1>
+    <p>Historique de vos opérations.</p>
+  </div>
+
+  <div class="container">
+    <div *ngIf="loading" class="empty">Chargement...</div>
+
+    <div *ngIf="!loading && !payments.length" class="empty">
+      <h2>Aucun paiement</h2>
+      <p>Vos paiements apparaîtront ici.</p>
+    </div>
+
+    <div class="table-card" *ngIf="!loading && payments.length">
+      <div class="payment" *ngFor="let payment of payments">
+        <div>
+          <strong>{{ payment.amount | number:'1.0-0' }} FCFA</strong>
+          <span>{{ payment.method }} · {{ payment.reference || 'Sans référence' }}</span>
+        </div>
+        <b>{{ payment.status }}</b>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,14 @@
+ .list-page{min-height:100vh;background:#f7f8fc}
+.list-hero{padding:65px 7%;background:linear-gradient(135deg,#111827,#312e81);color:white}
+.list-hero span{font-size:12px;color:#c4b5fd;font-weight:800;letter-spacing:2px}
+.list-hero h1{font-size:45px;margin:12px 0}
+.list-hero p{color:#d1d5db}
+.list-container{max-width:1100px;margin:auto;padding:55px 25px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.reservation-card{background:white;padding:25px;border-radius:18px;border:1px solid #e5e7eb;box-shadow:0 10px 30px #0000000a}
+.reservation-card h2{color:#111827}
+.reservation-card p{color:#6b7280}
+.status{display:inline-block;padding:7px 12px;border-radius:20px;background:#ede9fe;color:#6d28d9;font-size:12px;font-weight:800}
+.empty{text-align:center;background:white;border-radius:20px;padding:55px;color:#6b7280}
+.error{color:#b91c1c}
+.btn{display:inline-block;background:#7c3aed;color:white;padding:13px 20px;border-radius:10px;text-decoration:none;font-weight:800}

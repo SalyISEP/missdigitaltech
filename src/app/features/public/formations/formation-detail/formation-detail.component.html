@@ -70,7 +70,7 @@
         <div *ngIf="!authService.isLoggedIn()" class="login-required">
           <h3>Prêt à commencer ?</h3>
           <p>Connectez-vous pour réserver cette formation.</p>
-          <a routerLink="/login" class="btn-primary full">Se connecter →</a>
+          <a [routerLink]="['/login']" [queryParams]="{returnUrl: '/formations/' + formation.id}" class="btn-primary full">Se connecter →</a>
           <a routerLink="/register" class="register-link">Créer mon compte</a>
         </div>
 

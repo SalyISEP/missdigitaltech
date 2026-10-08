@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
@@ -19,7 +19,7 @@ export class LoginComponent {
 
   constructor(
     private auth: AuthService,
-    private router: Router,
+    private router: Router, private route: ActivatedRoute, private route: ActivatedRoute,
     private notifications: NotificationService
   ) {}
 
@@ -43,9 +43,9 @@ export class LoginComponent {
         this.notifications.success('Connexion réussie.');
 
         if (user.role === 'admin') {
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/admin/dashboard');
         } else {
-          this.router.navigate(['/espace-client/dashboard']);
+          this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/espace-client/dashboard');
         }
       },
       error: error => {

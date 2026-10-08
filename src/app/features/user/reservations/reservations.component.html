@@ -1,61 +1,29 @@
-<section class="reservations-page">
-
-  <div class="page-header">
-    <span class="eyebrow">MDT ACADEMY</span>
+<section class="list-page">
+  <div class="list-hero">
+    <span>MDT ACADEMY</span>
     <h1>Mes réservations</h1>
+    <p>Retrouvez toutes vos demandes de formation.</p>
   </div>
 
-  <div *ngIf="loading" class="state">
-    Chargement...
+  <div class="list-container">
+    <div *ngIf="loading" class="empty">Chargement...</div>
+
+    <div *ngIf="!loading && error" class="empty error">{{ error }}</div>
+
+    <div *ngIf="!loading && !error && reservations.length === 0" class="empty">
+      <h2>Aucune réservation</h2>
+      <p>Vous n'avez encore réservé aucune formation.</p>
+      <a routerLink="/formations" class="btn">Découvrir les formations</a>
+    </div>
+
+    <div class="cards" *ngIf="!loading && reservations.length">
+      <article class="reservation-card" *ngFor="let reservation of reservations">
+        <span class="status">{{ reservation.status }}</span>
+        <h2>{{ reservation.formationTitle }}</h2>
+        <p>📅 {{ reservation.date }}</p>
+        <p *ngIf="reservation.time">🕐 {{ reservation.time }}</p>
+        <p *ngIf="reservation.notes">{{ reservation.notes }}</p>
+      </article>
+    </div>
   </div>
-
-  <div *ngIf="error" class="state error">
-    {{ error }}
-  </div>
-
-  <div
-    *ngIf="!loading && !error && reservations.length === 0"
-    class="state"
-  >
-    Vous n'avez encore aucune réservation.
-  </div>
-
-  <div
-    *ngIf="!loading && !error && reservations.length > 0"
-    class="reservations-list"
-  >
-
-    <article
-      class="reservation-card"
-      *ngFor="let reservation of reservations"
-    >
-
-      <h2>
-        {{ reservation.formationTitle }}
-      </h2>
-
-      <p>
-        <strong>Date :</strong>
-        {{ reservation.date | date:'dd/MM/yyyy' }}
-      </p>
-
-      <p *ngIf="reservation.time">
-        <strong>Heure :</strong>
-        {{ reservation.time }}
-      </p>
-
-      <p>
-        <strong>Statut :</strong>
-        {{ reservation.status }}
-      </p>
-
-      <p *ngIf="reservation.notes">
-        <strong>Notes :</strong>
-        {{ reservation.notes }}
-      </p>
-
-    </article>
-
-  </div>
-
 </section>

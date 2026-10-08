@@ -1,25 +1,39 @@
-<section class="dashboard-page">
-  <div class="dashboard-header">
-    <span>ESPACE CLIENT</span>
-
-    <h1>
-      Bienvenue
-      @if (auth.getUser()) {
-        {{ auth.getUser()?.firstName }}
-      }
-    </h1>
-
-    <p>
-      Retrouvez ici vos formations, réservations, paiements et messages.
-    </p>
+<section class="client-page">
+  <div class="client-hero">
+    <div>
+      <span>ESPACE CLIENT</span>
+      <h1>Bienvenue, {{ auth.getCurrentUser()?.firstName || 'chez Miss Digital' }} 👋</h1>
+      <p>Gérez vos formations, réservations et paiements depuis votre espace personnel.</p>
+    </div>
   </div>
 
-  <div class="dashboard-grid">
-    <a routerLink="/courses">Mes formations</a>
-    <a routerLink="/reservations">Mes réservations</a>
-    <a routerLink="/payments">Mes paiements</a>
-    <a routerLink="/messages">Mes messages</a>
-    <a routerLink="/profile">Mon profil</a>
-    <a routerLink="/settings">Paramètres</a>
+  <div class="client-container">
+    <div class="stats">
+      <div class="stat">
+        <strong>{{ reservations.length }}</strong>
+        <span>Réservations</span>
+      </div>
+      <div class="stat">
+        <strong>{{ payments.length }}</strong>
+        <span>Paiements</span>
+      </div>
+      <div class="stat">
+        <strong>MDT</strong>
+        <span>Academy</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a routerLink="/formations" class="action primary">🎓 Voir les formations</a>
+      <a routerLink="/espace-client/reservations" class="action">📅 Mes réservations</a>
+      <a routerLink="/espace-client/paiements" class="action">💳 Mes paiements</a>
+    </div>
+
+    <div class="welcome-card">
+      <span>MDT ACADEMY</span>
+      <h2>Votre progression commence ici.</h2>
+      <p>Retrouvez vos réservations et suivez vos opérations depuis votre espace client.</p>
+      <a routerLink="/formations" class="btn">Découvrir les formations →</a>
+    </div>
   </div>
 </section>

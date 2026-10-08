@@ -1,12 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Payment, PaymentService } from '../../../core/services/payment.service';
 
 @Component({
-  selector: 'app-payments',
-  standalone: true,
-  imports: [],
-  templateUrl: './payments.component.html',
-  styleUrl: './payments.component.scss'
+  selector:'app-user-payments',
+  standalone:true,
+  imports:[CommonModule],
+  templateUrl:'./payments.component.html',
+  styleUrl:'./payments.component.scss'
 })
-export class PaymentsComponent {
+export class PaymentsComponent implements OnInit {
+  payments: Payment[] = [];
+  loading = true;
 
+  constructor(private service: PaymentService) {}
+
+  ngOnInit(): void {
+    this.service.getPayments().subscribe({
+      next: data => { this.payments = data; this.loading = false; },
+      error: () => this.loading = false
+    });
+  }
 }

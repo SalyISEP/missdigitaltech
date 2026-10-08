@@ -3,26 +3,17 @@ import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
-
-  // =========================
-  // PUBLIC
-  // =========================
   {
     path: '',
-    redirectTo: 'accueil',
-    pathMatch: 'full'
+    loadComponent: () =>
+      import('./features/public/home/home.component')
+        .then(m => m.HomeComponent)
   },
   {
     path: 'accueil',
     loadComponent: () =>
       import('./features/public/home/home.component')
         .then(m => m.HomeComponent)
-  },
-  {
-    path: 'a-propos',
-    loadComponent: () =>
-      import('./features/public/about/about.component')
-        .then(m => m.AboutComponent)
   },
   {
     path: 'expertises',
@@ -60,61 +51,47 @@ export const routes: Routes = [
       import('./features/public/formations/formation-detail/formation-detail.component')
         .then(m => m.FormationDetailComponent)
   },
-
-  // =========================
-  // AUTHENTIFICATION
-  // =========================
   {
-    path: 'connexion',
+    path: 'login',
     loadComponent: () =>
       import('./features/auth/login/login.component')
         .then(m => m.LoginComponent)
   },
   {
-    path: 'inscription',
+    path: 'register',
     loadComponent: () =>
       import('./features/auth/register/register.component')
         .then(m => m.RegisterComponent)
   },
   {
-    path: 'mot-de-passe-oublie',
+    path: 'forgot-password',
     loadComponent: () =>
       import('./features/auth/forgot-password/forgot-password.component')
         .then(m => m.ForgotPasswordComponent)
   },
-
-  // =========================
-  // ESPACE CLIENT
-  // =========================
   {
     path: 'espace-client',
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
       },
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./features/user/dashboard/dashboard.component')
-            .then(m => m.DashboardComponent)
+            .then(m => m.UserDashboardComponent)
       },
       {
-        path: 'profil',
+        path: 'profile',
         loadComponent: () =>
           import('./features/user/profile/profile.component')
             .then(m => m.ProfileComponent)
       },
       {
-        path: 'formations',
-        loadComponent: () =>
-          import('./features/user/courses/courses.component')
-            .then(m => m.CoursesComponent)
-      },
-      {
-        path: 'cours',
+        path: 'courses',
         loadComponent: () =>
           import('./features/user/courses/courses.component')
             .then(m => m.CoursesComponent)
@@ -126,7 +103,7 @@ export const routes: Routes = [
             .then(m => m.ReservationsComponent)
       },
       {
-        path: 'paiements',
+        path: 'payments',
         loadComponent: () =>
           import('./features/user/payments/payments.component')
             .then(m => m.PaymentsComponent)
@@ -138,25 +115,21 @@ export const routes: Routes = [
             .then(m => m.MessagesComponent)
       },
       {
-        path: 'parametres',
+        path: 'settings',
         loadComponent: () =>
           import('./features/user/settings/settings.component')
             .then(m => m.SettingsComponent)
       }
     ]
   },
-
-  // =========================
-  // ADMIN
-  // =========================
   {
     path: 'admin',
     canActivate: [adminGuard],
     children: [
       {
         path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
       },
       {
         path: 'dashboard',
@@ -165,7 +138,7 @@ export const routes: Routes = [
             .then(m => m.DashboardComponent)
       },
       {
-        path: 'utilisateurs',
+        path: 'users',
         loadComponent: () =>
           import('./features/admin/users/users.component')
             .then(m => m.UsersComponent)
@@ -183,47 +156,13 @@ export const routes: Routes = [
             .then(m => m.ModulesComponent)
       },
       {
-        path: 'cours',
+        path: 'courses',
         loadComponent: () =>
           import('./features/admin/courses/courses.component')
             .then(m => m.CoursesComponent)
-      },
-      {
-        path: 'reservations',
-        loadComponent: () =>
-          import('./features/admin/reservations/reservations.component')
-            .then(m => m.ReservationsComponent)
-      },
-      {
-        path: 'paiements',
-        loadComponent: () =>
-          import('./features/admin/payments/payments.component')
-            .then(m => m.PaymentsComponent)
-      },
-      {
-        path: 'messages',
-        loadComponent: () =>
-          import('./features/admin/messages/messages.component')
-            .then(m => m.MessagesComponent)
-      },
-      {
-        path: 'portfolio',
-        loadComponent: () =>
-          import('./features/admin/portfolio/portfolio.component')
-            .then(m => m.PortfolioComponent)
-      },
-      {
-        path: 'parametres',
-        loadComponent: () =>
-          import('./features/admin/settings/settings.component')
-            .then(m => m.SettingsComponent)
       }
     ]
   },
-
-  // =========================
-  // 404
-  // =========================
   {
     path: '**',
     redirectTo: 'accueil'
