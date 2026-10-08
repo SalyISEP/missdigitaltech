@@ -1,1 +1,25 @@
-<p>dashboard works!</p>
+<section class="dashboard-page">
+  <div class="dashboard-header">
+    <span>ESPACE CLIENT</span>
+
+    <h1>
+      Bienvenue
+      @if (auth.getUser()) {
+        {{ auth.getUser()?.firstName }}
+      }
+    </h1>
+
+    <p>
+      Retrouvez ici vos formations, réservations, paiements et messages.
+    </p>
+  </div>
+
+  <div class="dashboard-grid">
+    <a routerLink="/courses">Mes formations</a>
+    <a routerLink="/reservations">Mes réservations</a>
+    <a routerLink="/payments">Mes paiements</a>
+    <a routerLink="/messages">Mes messages</a>
+    <a routerLink="/profile">Mon profil</a>
+    <a routerLink="/settings">Paramètres</a>
+  </div>
+</section>

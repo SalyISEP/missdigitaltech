@@ -1,0 +1,30 @@
+.dashboard-page {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header span {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-grid a {
+  display: block;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
+}

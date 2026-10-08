@@ -1,41 +1,27 @@
-<header class="navbar">
-
-  <div class="container navbar-inner">
-
-    <a routerLink="/accueil" class="brand">
-      <span class="brand-mark">MDT</span>
-
-      <span class="brand-text">
-        <strong>MISS DIGITAL</strong>
-        <small>TECH</small>
-      </span>
-    </a>
-
-
-    <nav>
-
-      <a routerLink="/accueil">Accueil</a>
-      <a routerLink="/a-propos">À propos</a>
-      <a routerLink="/expertises">Expertises</a>
-      <a routerLink="/portfolio">Portfolio</a>
-      <a routerLink="/fondatrice">Fondatrice</a>
-      <a routerLink="/contact">Contact</a>
-
-    </nav>
-
-
-    <div class="navbar-actions">
-
-      <a routerLink="/connexion" class="login">
-        Se connecter
-      </a>
-
-      <a routerLink="/reserver" class="nav-button">
-        Réserver
-      </a>
-
-    </div>
-
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a routerLink="/">MISS DIGITAL</a>
   </div>
 
-</header>
+  <div class="navbar-links">
+    <a routerLink="/">Accueil</a>
+    <a routerLink="/formations">Formations</a>
+    <a routerLink="/expertises">Expertises</a>
+    <a routerLink="/portfolio">Portfolio</a>
+    <a routerLink="/fondatrice">Fondatrice</a>
+    <a routerLink="/contact">Contact</a>
+
+    @if (auth.isLoggedIn()) {
+      <button type="button" (click)="goToDashboard()">
+        Mon espace
+      </button>
+
+      <button type="button" (click)="logout()">
+        Déconnexion
+      </button>
+    } @else {
+      <a routerLink="/login">Connexion</a>
+      <a routerLink="/register">Inscription</a>
+    }
+  </div>
+</nav>
