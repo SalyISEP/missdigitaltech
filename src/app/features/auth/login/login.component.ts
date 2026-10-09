@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -18,44 +18,42 @@ export class LoginComponent {
   loading = false;
 
   constructor(
-    private auth: AuthService,
-    private router: Router, private route: ActivatedRoute, private route: ActivatedRoute,
-    private notifications: NotificationService
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   submit(): void {
-    this.error = '';
+    this.login();
+  }
 
+  login(): void {
     if (!this.email || !this.password) {
-      this.error = 'Veuillez remplir tous les champs.';
+      this.error = 'Veuillez renseigner votre adresse e-mail et votre mot de passe.';
       return;
     }
 
     this.loading = true;
+    this.error = '';
 
-    this.auth.login({
+    this.authService.login({
       email: this.email,
       password: this.password
     }).subscribe({
-      next: user => {
-        this.loading = false;
+      next: () => {
+        const returnUrl =
+          this.route.snapshot.queryParamMap.get('returnUrl');
 
-        this.notifications.success('Connexion réussie.');
-
-        if (user.role === 'admin') {
-          this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/admin/dashboard');
-        } else {
-          this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/espace-client/dashboard');
-        }
+        this.router.navigateByUrl(
+          returnUrl ||
+          (this.authService.isAdmin()
+            ? '/admin/dashboard'
+            : '/espace-client/dashboard')
+        );
       },
-      error: error => {
+      error: () => {
+        this.error = 'E-mail ou mot de passe incorrect.';
         this.loading = false;
-
-        if (error?.status === 401) {
-          this.error = 'E-mail ou mot de passe incorrect.';
-        } else {
-          this.error = 'Impossible de contacter le serveur.';
-        }
       }
     });
   }

@@ -16,6 +16,12 @@ export const routes: Routes = [
         .then(m => m.HomeComponent)
   },
   {
+    path: 'a-propos',
+    loadComponent: () =>
+      import('./features/public/about/about.component')
+        .then(m => m.AboutComponent)
+  },
+  {
     path: 'expertises',
     loadComponent: () =>
       import('./features/public/expertises/expertises.component')
@@ -160,6 +166,36 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/courses/courses.component')
             .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/admin/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      },
+      {
+        path: 'portfolio',
+        loadComponent: () =>
+          import('./features/admin/portfolio/portfolio.component')
+            .then(m => m.PortfolioComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/admin/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'payments',
+        loadComponent: () =>
+          import('./features/admin/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/admin/messages/messages.component')
+            .then(m => m.MessagesComponent)
       }
     ]
   },
