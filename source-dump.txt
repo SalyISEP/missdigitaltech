@@ -1,0 +1,5395 @@
+﻿===== FILE: src\index.html =====
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Missdigitaltech</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+
+===== FILE: src\main.ts =====
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
+
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error(err));
+
+===== FILE: src\styles.scss =====
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+:root {
+  --mdt-black: #090909;
+  --mdt-dark: #111111;
+  --mdt-gold: #c9a227;
+  --mdt-gold-light: #e0c45c;
+  --mdt-ivory: #f7f3ea;
+  --mdt-white: #ffffff;
+  --mdt-gray: #777777;
+  --mdt-border: rgba(201, 162, 39, 0.2);
+
+  --font-body: 'DM Sans', sans-serif;
+  --font-title: 'Playfair Display', serif;
+
+  --radius: 14px;
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--mdt-ivory);
+  color: var(--mdt-black);
+  line-height: 1.6;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.section {
+  padding: 100px 0;
+}
+
+.section-title {
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.1;
+}
+
+.gold {
+  color: var(--mdt-gold);
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 28px, 1200px);
+  }
+
+  .section {
+    padding: 70px 0;
+  }
+}
+
+===== FILE: src\app\app.component.html =====
+<app-navbar></app-navbar>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<app-footer></app-footer>
+
+===== FILE: src\app\app.component.scss =====
+
+===== FILE: src\app\app.component.spec.ts =====
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './shared/layout/navbar/navbar.component';
+import { FooterComponent } from './shared/layout/footer/footer.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    NavbarComponent,
+    FooterComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
+})
+export class AppComponent {
+}
+
+===== FILE: src\app\app.component.ts =====
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './shared/layout/navbar/navbar.component';
+import { FooterComponent } from './shared/layout/footer/footer.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
+})
+export class AppComponent {}
+
+===== FILE: src\app\app.config.ts =====
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+
+import { routes } from './app.routes';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
+  ]
+};
+
+===== FILE: src\app\app.routes.backup.ts =====
+import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
+
+export const routes: Routes = [
+
+  // =========================
+  // PUBLIC
+  // =========================
+  {
+    path: '',
+    redirectTo: 'accueil',
+    pathMatch: 'full'
+  },
+  {
+    path: 'accueil',
+    loadComponent: () =>
+      import('./features/public/home/home.component')
+        .then(m => m.HomeComponent)
+  },
+  {
+    path: 'a-propos',
+    loadComponent: () =>
+      import('./features/public/about/about.component')
+        .then(m => m.AboutComponent)
+  },
+  {
+    path: 'expertises',
+    loadComponent: () =>
+      import('./features/public/expertises/expertises.component')
+        .then(m => m.ExpertisesComponent)
+  },
+  {
+    path: 'portfolio',
+    loadComponent: () =>
+      import('./features/public/portfolio/portfolio.component')
+        .then(m => m.PortfolioComponent)
+  },
+  {
+    path: 'fondatrice',
+    loadComponent: () =>
+      import('./features/public/fondatrice/fondatrice.component')
+        .then(m => m.FondatriceComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () =>
+      import('./features/public/contact/contact.component')
+        .then(m => m.ContactComponent)
+  },
+  {
+    path: 'formations',
+    loadComponent: () =>
+      import('./features/public/formations/formations.component')
+        .then(m => m.FormationsComponent)
+  },
+  {
+    path: 'formations/:id',
+    loadComponent: () =>
+      import('./features/public/formations/formation-detail/formation-detail.component')
+        .then(m => m.FormationDetailComponent)
+  },
+
+  // =========================
+  // AUTHENTIFICATION
+  // =========================
+  {
+    path: 'connexion',
+    loadComponent: () =>
+      import('./features/auth/login/login.component')
+        .then(m => m.LoginComponent)
+  },
+  {
+    path: 'inscription',
+    loadComponent: () =>
+      import('./features/auth/register/register.component')
+        .then(m => m.RegisterComponent)
+  },
+  {
+    path: 'mot-de-passe-oublie',
+    loadComponent: () =>
+      import('./features/auth/forgot-password/forgot-password.component')
+        .then(m => m.ForgotPasswordComponent)
+  },
+
+  // =========================
+  // ESPACE CLIENT
+  // =========================
+  {
+    path: 'espace-client',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/user/dashboard/dashboard.component')
+            .then(m => m.UserDashboardComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/user/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'paiements',
+        loadComponent: () =>
+          import('./features/user/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      }
+    ]
+,
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/user/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'profil',
+        loadComponent: () =>
+          import('./features/user/profile/profile.component')
+            .then(m => m.ProfileComponent)
+      },
+      {
+        path: 'formations',
+        loadComponent: () =>
+          import('./features/user/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'cours',
+        loadComponent: () =>
+          import('./features/user/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/user/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'paiements',
+        loadComponent: () =>
+          import('./features/user/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/user/messages/messages.component')
+            .then(m => m.MessagesComponent)
+      },
+      {
+        path: 'parametres',
+        loadComponent: () =>
+          import('./features/user/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      }
+    ]
+  },
+
+  // =========================
+  // ADMIN
+  // =========================
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'utilisateurs',
+        loadComponent: () =>
+          import('./features/admin/users/users.component')
+            .then(m => m.UsersComponent)
+      },
+      {
+        path: 'formations',
+        loadComponent: () =>
+          import('./features/admin/formations/formations.component')
+            .then(m => m.FormationsComponent)
+      },
+      {
+        path: 'modules',
+        loadComponent: () =>
+          import('./features/admin/modules/modules.component')
+            .then(m => m.ModulesComponent)
+      },
+      {
+        path: 'cours',
+        loadComponent: () =>
+          import('./features/admin/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/admin/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'paiements',
+        loadComponent: () =>
+          import('./features/admin/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/admin/messages/messages.component')
+            .then(m => m.MessagesComponent)
+      },
+      {
+        path: 'portfolio',
+        loadComponent: () =>
+          import('./features/admin/portfolio/portfolio.component')
+            .then(m => m.PortfolioComponent)
+      },
+      {
+        path: 'parametres',
+        loadComponent: () =>
+          import('./features/admin/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      }
+    ]
+  },
+
+  // =========================
+  // 404
+  // =========================
+  {
+    path: '**',
+    redirectTo: 'accueil'
+  }
+];
+
+===== FILE: src\app\app.routes.ts =====
+import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
+
+export const routes: Routes = [
+  { path: 'tech', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'tech' } },
+  { path: 'com', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'com' } },
+  { path: 'print', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'print' } },
+  { path: 'media', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'media' } },
+  { path: 'academy', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'academy' } },
+  { path: 'equip', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'equip' } },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/public/home/home.component')
+        .then(m => m.HomeComponent)
+  },
+  {
+    path: 'accueil',
+    loadComponent: () =>
+      import('./features/public/home/home.component')
+        .then(m => m.HomeComponent)
+  },
+  {
+    path: 'a-propos',
+    loadComponent: () =>
+      import('./features/public/about/about.component')
+        .then(m => m.AboutComponent)
+  },
+  {
+    path: 'expertises',
+    loadComponent: () =>
+      import('./features/public/expertises/expertises.component')
+        .then(m => m.ExpertisesComponent)
+  },
+  {
+    path: 'portfolio',
+    loadComponent: () =>
+      import('./features/public/portfolio/portfolio.component')
+        .then(m => m.PortfolioComponent)
+  },
+  {
+    path: 'fondatrice',
+    loadComponent: () =>
+      import('./features/public/fondatrice/fondatrice.component')
+        .then(m => m.FondatriceComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () =>
+      import('./features/public/contact/contact.component')
+        .then(m => m.ContactComponent)
+  },
+  {
+    path: 'formations',
+    loadComponent: () =>
+      import('./features/public/formations/formations.component')
+        .then(m => m.FormationsComponent)
+  },
+  {
+    path: 'formations/:id',
+    loadComponent: () =>
+      import('./features/public/formations/formation-detail/formation-detail.component')
+        .then(m => m.FormationDetailComponent)
+  },
+  { path: 'reserver', loadComponent: () => import('./features/public/reservation/reservation.component').then(m => m.ReservationComponent) },
+
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component')
+        .then(m => m.LoginComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./features/auth/register/register.component')
+        .then(m => m.RegisterComponent)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/forgot-password/forgot-password.component')
+        .then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'espace-client',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/user/dashboard/dashboard.component')
+            .then(m => m.UserDashboardComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/user/profile/profile.component')
+            .then(m => m.ProfileComponent)
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./features/user/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/user/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'payments',
+        loadComponent: () =>
+          import('./features/user/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/user/messages/messages.component')
+            .then(m => m.MessagesComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/user/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      }
+    ]
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/admin/users/users.component')
+            .then(m => m.UsersComponent)
+      },
+      {
+        path: 'formations',
+        loadComponent: () =>
+          import('./features/admin/formations/formations.component')
+            .then(m => m.FormationsComponent)
+      },
+      {
+        path: 'modules',
+        loadComponent: () =>
+          import('./features/admin/modules/modules.component')
+            .then(m => m.ModulesComponent)
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./features/admin/courses/courses.component')
+            .then(m => m.CoursesComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/admin/settings/settings.component')
+            .then(m => m.SettingsComponent)
+      },
+      {
+        path: 'portfolio',
+        loadComponent: () =>
+          import('./features/admin/portfolio/portfolio.component')
+            .then(m => m.PortfolioComponent)
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('./features/admin/reservations/reservations.component')
+            .then(m => m.ReservationsComponent)
+      },
+      {
+        path: 'payments',
+        loadComponent: () =>
+          import('./features/admin/payments/payments.component')
+            .then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/admin/messages/messages.component')
+            .then(m => m.MessagesComponent)
+      }
+    ]
+  },
+  {
+    path: '**',
+    redirectTo: 'accueil'
+  }
+];
+
+===== FILE: src\app\core\guards\admin.guard.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+import { CanActivateFn } from '@angular/router';
+
+import { adminGuard } from './admin.guard';
+
+describe('adminGuard', () => {
+  const executeGuard: CanActivateFn = (...guardParameters) => 
+      TestBed.runInInjectionContext(() => adminGuard(...guardParameters));
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+  });
+
+  it('should be created', () => {
+    expect(executeGuard).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\guards\admin.guard.ts =====
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+export const adminGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (!auth.isLoggedIn()) {
+    return router.createUrlTree(['/login']);
+  }
+
+  if (auth.isAdmin()) {
+    return true;
+  }
+
+  return router.createUrlTree(['/espace-client/dashboard']);
+};
+
+===== FILE: src\app\core\guards\auth.guard.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+import { CanActivateFn } from '@angular/router';
+
+import { authGuard } from './auth.guard';
+
+describe('authGuard', () => {
+  const executeGuard: CanActivateFn = (...guardParameters) => 
+      TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+  });
+
+  it('should be created', () => {
+    expect(executeGuard).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\guards\auth.guard.ts =====
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+export const authGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (auth.isLoggedIn()) {
+    return true;
+  }
+
+  return router.createUrlTree(['/login']);
+};
+
+===== FILE: src\app\core\interceptors\auth.interceptor.ts =====
+import { HttpInterceptorFn } from '@angular/common/http';
+
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+
+  const token = localStorage.getItem('mdt_access_token');
+
+  if (!token) {
+    return next(req);
+  }
+
+  const authReq = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return next(authReq);
+};
+
+===== FILE: src\app\core\models\formation.model.ts =====
+export interface Formation {
+  id: number;
+  title: string;
+  description: string;
+  category?: string;
+  price: number;
+  duration?: string;
+  image?: string;
+  available?: boolean;
+}
+
+===== FILE: src\app\core\models\message.model.ts =====
+export interface Message {
+  id: number;
+  subject: string;
+  content: string;
+  read: boolean;
+  createdAt: string;
+}
+
+===== FILE: src\app\core\models\payment.model.ts =====
+export type PaymentStatus =
+  | 'pending'
+  | 'paid'
+  | 'failed'
+  | 'cancelled';
+
+export interface Payment {
+  id: number;
+  amount: number;
+  method: string;
+  reference?: string;
+  status: PaymentStatus;
+  createdAt: string;
+}
+
+===== FILE: src\app\core\models\reservation.model.ts =====
+export type ReservationStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'cancelled'
+  | 'completed';
+
+export interface Reservation {
+  id: number;
+  formationId?: number;
+  formationTitle?: string;
+  date: string;
+  time?: string;
+  status: ReservationStatus;
+  notes?: string;
+}
+
+===== FILE: src\app\core\models\user.model.ts =====
+export type UserRole = 'client' | 'admin';
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: UserRole;
+  phone?: string;
+}
+
+export interface AuthCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
+
+===== FILE: src\app\core\services\api.service.ts =====
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+  private readonly baseUrl = environment.apiUrl;
+
+  constructor(private http: HttpClient) {}
+
+  get<T>(endpoint: string): Observable<T> {
+    return this.http.get<T>(
+      `${this.baseUrl}/${endpoint}`,
+      this.options()
+    );
+  }
+
+  post<T>(endpoint: string, data: unknown): Observable<T> {
+    return this.http.post<T>(
+      `${this.baseUrl}/${endpoint}`,
+      data,
+      this.options()
+    );
+  }
+
+  put<T>(endpoint: string, data: unknown): Observable<T> {
+    return this.http.put<T>(
+      `${this.baseUrl}/${endpoint}`,
+      data,
+      this.options()
+    );
+  }
+
+  delete<T>(endpoint: string): Observable<T> {
+    return this.http.delete<T>(
+      `${this.baseUrl}/${endpoint}`,
+      this.options()
+    );
+  }
+
+  private options() {
+    const token = localStorage.getItem('mdt_access_token');
+
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    if (token) {
+      headers = headers.set(
+        'Authorization',
+        `Bearer ${token}`
+      );
+    }
+
+    return { headers };
+  }
+}
+
+===== FILE: src\app\core\services\auth-api.service.ts =====
+import { Injectable } from '@angular/core';
+import { Observable, tap } from 'rxjs';
+import { ApiService } from './api.service';
+
+interface LoginResponse {
+  access: string;
+  refresh: string;
+  user?: unknown;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthApiService {
+  constructor(private api: ApiService) {}
+
+  login(
+    email: string,
+    password: string
+  ): Observable<LoginResponse> {
+    return this.api
+      .post<LoginResponse>('auth/login/', {
+        email,
+        password
+      })
+      .pipe(
+        tap(response => {
+          localStorage.setItem(
+            'mdt_access_token',
+            response.access
+          );
+
+          localStorage.setItem(
+            'mdt_refresh_token',
+            response.refresh
+          );
+        })
+      );
+  }
+
+  register(data: unknown): Observable<unknown> {
+    return this.api.post(
+      'auth/register/',
+      data
+    );
+  }
+
+  refresh(): Observable<{ access: string }> {
+    const refresh =
+      localStorage.getItem('mdt_refresh_token');
+
+    return this.api
+      .post<{ access: string }>(
+        'auth/token/refresh/',
+        { refresh }
+      )
+      .pipe(
+        tap(response => {
+          localStorage.setItem(
+            'mdt_access_token',
+            response.access
+          );
+        })
+      );
+  }
+
+  logout(): void {
+    localStorage.removeItem(
+      'mdt_access_token'
+    );
+
+    localStorage.removeItem(
+      'mdt_refresh_token'
+    );
+  }
+}
+
+===== FILE: src\app\core\services\auth.service.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+
+import { AuthService } from './auth.service';
+
+describe('AuthService', () => {
+  let service: AuthService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(AuthService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\services\auth.service.ts =====
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { User } from '../models/user.model';
+import { environment } from '../../../environments/environment';
+
+interface JwtResponse {
+  access: string;
+  refresh: string;
+}
+
+interface ApiUser {
+  id: number | string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  email: string;
+  phone?: string;
+  role?: string;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+
+  private readonly api = environment.apiUrl;
+  private readonly accessKey = 'mdt_access_token';
+  private readonly refreshKey = 'mdt_refresh_token';
+  private readonly userKey = 'mdt_user';
+
+  private currentUser: User | null = this.loadUser();
+
+  constructor(private http: HttpClient) {}
+
+  login(credentials: {
+    email: string;
+    password: string;
+  }): Observable<User> {
+    return this.http
+      .post<JwtResponse>(`${this.api}/auth/login/`, credentials)
+      .pipe(
+        tap(tokens => {
+          localStorage.setItem(this.accessKey, tokens.access);
+          localStorage.setItem(this.refreshKey, tokens.refresh);
+        }),
+        switchMap(() => this.loadCurrentUser())
+      );
+  }
+
+  register(data: RegisterData): Observable<any> {
+    const payload = {
+      email: data.email,
+      password: data.password,
+      first_name: data.first_name || data.firstName || '',
+      last_name: data.last_name || data.lastName || '',
+      phone: data.phone || ''
+    };
+
+    return this.http.post(`${this.api}/auth/register/`, payload);
+  }
+
+  loadCurrentUser(): Observable<User> {
+    return this.http
+      .get<ApiUser>(`${this.api}/users/me/`)
+      .pipe(
+        map(user => this.mapUser(user)),
+        tap(user => {
+          this.currentUser = user;
+          localStorage.setItem(this.userKey, JSON.stringify(user));
+        })
+      );
+  }
+
+  getCurrentUser(): User | null {
+    return this.currentUser;
+  }
+
+  getUser(): User | null {
+    return this.currentUser;
+  }
+
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.api}/auth/password-reset/`, { email });
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.accessKey);
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.accessKey);
+    localStorage.removeItem(this.refreshKey);
+    localStorage.removeItem(this.userKey);
+    this.currentUser = null;
+  }
+
+  private mapUser(user: ApiUser): User {
+    return {
+      id: String(user.id),
+      firstName: user.first_name || '',
+      lastName: user.last_name || '',
+      email: user.email,
+      phone: user.phone || '',
+      role: user.role === 'admin' ? 'admin' : 'client'
+    };
+  }
+
+  private loadUser(): User | null {
+    const stored = localStorage.getItem(this.userKey);
+
+    if (!stored) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(stored) as User;
+    } catch {
+      localStorage.removeItem(this.userKey);
+      return null;
+    }
+  }
+}
+
+===== FILE: src\app\core\services\formation.service.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+
+import { FormationService } from './formation.service';
+
+describe('FormationService', () => {
+  let service: FormationService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(FormationService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\services\formation.service.ts =====
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+export interface Formation {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  duration: string;
+  image: string;
+  available: boolean;
+  created_at: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class FormationService {
+
+  private readonly api = `${environment.apiUrl}/formations/`;
+
+  constructor(private http: HttpClient) {}
+
+  getFormations(): Observable<Formation[]> {
+    return this.http.get<Formation[]>(this.api);
+  }
+
+  getFormation(id: number): Observable<Formation> {
+    return this.http.get<Formation>(`${this.api}${id}/`);
+  }
+}
+
+===== FILE: src\app\core\services\message.service.ts =====
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ApiService } from './api.service';
+import { Message } from '../models/message.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MessageService {
+  constructor(private api: ApiService) {}
+
+  getMine(): Observable<Message[]> {
+    return this.api.get<Message[]>(
+      'messages/my/'
+    );
+  }
+
+  getAll(): Observable<Message[]> {
+    return this.api.get<Message[]>(
+      'messages/'
+    );
+  }
+
+  markAsRead(id: number): Observable<Message> {
+    return this.api.put<Message>(
+      `messages/${id}/`,
+      { read: true }
+    );
+  }
+}
+
+===== FILE: src\app\core\services\notification.service.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+
+import { NotificationService } from './notification.service';
+
+describe('NotificationService', () => {
+  let service: NotificationService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(NotificationService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\services\notification.service.ts =====
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+  success(message: string): void {
+    console.log('[SUCCESS]', message);
+  }
+
+  error(message: string): void {
+    console.error('[ERROR]', message);
+  }
+
+  info(message: string): void {
+    console.info('[INFO]', message);
+  }
+
+  warning(message: string): void {
+    console.warn('[WARNING]', message);
+  }
+
+
+  constructor() { }
+}
+
+===== FILE: src\app\core\services\payment.service.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+
+import { PaymentService } from './payment.service';
+
+describe('PaymentService', () => {
+  let service: PaymentService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(PaymentService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\services\payment.service.ts =====
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+export interface Payment {
+  id: number;
+  amount: string;
+  method: string;
+  reference: string;
+  status: string;
+  created_at: string;
+  user: number;
+}
+
+export interface PaymentData {
+  reservation: number;
+  method: 'wave' | 'orange_money';
+  reference?: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PaymentService {
+
+  private readonly api = `${environment.apiUrl}/payments/`;
+
+  constructor(private http: HttpClient) {}
+
+  getPayments(): Observable<Payment[]> {
+    return this.http.get<Payment[]>(this.api);
+  }
+
+  createPayment(data: PaymentData): Observable<Payment> {
+    return this.http.post<Payment>(this.api, data);
+  }
+}
+
+===== FILE: src\app\core\services\reservation.service.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+
+import { ReservationService } from './reservation.service';
+
+describe('ReservationService', () => {
+  let service: ReservationService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ReservationService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\services\reservation.service.ts =====
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+export interface Reservation {
+  id: number;
+  formation: number;
+  formationTitle: string;
+  date: string;
+  time: string | null;
+  notes: string;
+  status: string;
+  created_at: string;
+}
+
+export interface ReservationData {
+  formation: number;
+  date: string;
+  time?: string;
+  notes?: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ReservationService {
+
+  private readonly api = `${environment.apiUrl}/reservations/`;
+
+  constructor(private http: HttpClient) {}
+
+  getReservations(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(this.api);
+  }
+
+  createReservation(data: ReservationData): Observable<Reservation> {
+    return this.http.post<Reservation>(this.api, data);
+  }
+}
+
+===== FILE: src\app\core\services\user.service.spec.ts =====
+import { TestBed } from '@angular/core/testing';
+
+import { UserService } from './user.service';
+
+describe('UserService', () => {
+  let service: UserService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(UserService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\core\services\user.service.ts =====
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ApiService } from './api.service';
+import { User } from '../models/user.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  constructor(private api: ApiService) {}
+
+  getMe(): Observable<User> {
+    return this.api.get<User>('users/me/');
+  }
+
+  updateMe(data: Partial<User>): Observable<User> {
+    return this.api.put<User>('users/me/', data);
+  }
+
+  getAll(): Observable<User[]> {
+    return this.api.get<User[]>('users/');
+  }
+
+  getById(id: string): Observable<User> {
+    return this.api.get<User>(`users/${id}/`);
+  }
+}
+
+===== FILE: src\app\features\admin\courses\courses.component.html =====
+<p>courses works!</p>
+
+===== FILE: src\app\features\admin\courses\courses.component.scss =====
+
+===== FILE: src\app\features\admin\courses\courses.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { CoursesComponent } from './courses.component';
+
+describe('CoursesComponent', () => {
+  let component: CoursesComponent;
+  let fixture: ComponentFixture<CoursesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CoursesComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(CoursesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\courses\courses.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-courses',
+  standalone: true,
+  imports: [],
+  templateUrl: './courses.component.html',
+  styleUrl: './courses.component.scss'
+})
+export class CoursesComponent {
+
+}
+
+===== FILE: src\app\features\admin\dashboard\dashboard.component.html =====
+<section class="dashboard-page">
+  <div class="dashboard-header">
+    <span>ADMINISTRATION</span>
+
+    <h1>
+      Tableau de bord administrateur
+    </h1>
+
+    <p>
+      GÃ©rez les utilisateurs, formations, paiements, rÃ©servations et contenus
+      de Miss Digital.
+    </p>
+  </div>
+
+  <div class="dashboard-grid">
+    <a routerLink="/admin/users">Utilisateurs</a>
+    <a routerLink="/admin/formations">Formations</a>
+    <a routerLink="/admin/courses">Cours</a>
+    <a routerLink="/admin/payments">Paiements</a>
+    <a routerLink="/admin/reservations">RÃ©servations</a>
+    <a routerLink="/admin/messages">Messages</a>
+    <a routerLink="/admin/portfolio">Portfolio</a>
+    <a routerLink="/admin/settings">ParamÃ¨tres</a>
+  </div>
+</section>
+
+===== FILE: src\app\features\admin\dashboard\dashboard.component.scss =====
+.dashboard-page {
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header span {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-grid a {
+  display: block;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
+}
+
+===== FILE: src\app\features\admin\dashboard\dashboard.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DashboardComponent } from './dashboard.component';
+
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DashboardComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\dashboard\dashboard.component.ts =====
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+
+@Component({
+  selector: 'app-admin-dashboard',
+  standalone: true,
+  imports: [RouterLink],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
+})
+export class DashboardComponent {
+  constructor(public auth: AuthService) {}
+}
+
+===== FILE: src\app\features\admin\formations\formations.component.html =====
+<p>formations works!</p>
+
+===== FILE: src\app\features\admin\formations\formations.component.scss =====
+
+===== FILE: src\app\features\admin\formations\formations.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FormationsComponent } from './formations.component';
+
+describe('FormationsComponent', () => {
+  let component: FormationsComponent;
+  let fixture: ComponentFixture<FormationsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FormationsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(FormationsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\formations\formations.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-formations',
+  standalone: true,
+  imports: [],
+  templateUrl: './formations.component.html',
+  styleUrl: './formations.component.scss'
+})
+export class FormationsComponent {
+
+}
+
+===== FILE: src\app\features\admin\messages\messages.component.html =====
+<p>messages works!</p>
+
+===== FILE: src\app\features\admin\messages\messages.component.scss =====
+
+===== FILE: src\app\features\admin\messages\messages.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { MessagesComponent } from './messages.component';
+
+describe('MessagesComponent', () => {
+  let component: MessagesComponent;
+  let fixture: ComponentFixture<MessagesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MessagesComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(MessagesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\messages\messages.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-messages',
+  standalone: true,
+  imports: [],
+  templateUrl: './messages.component.html',
+  styleUrl: './messages.component.scss'
+})
+export class MessagesComponent {
+
+}
+
+===== FILE: src\app\features\admin\modules\modules.component.html =====
+<p>modules works!</p>
+
+===== FILE: src\app\features\admin\modules\modules.component.scss =====
+
+===== FILE: src\app\features\admin\modules\modules.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ModulesComponent } from './modules.component';
+
+describe('ModulesComponent', () => {
+  let component: ModulesComponent;
+  let fixture: ComponentFixture<ModulesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ModulesComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ModulesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\modules\modules.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-modules',
+  standalone: true,
+  imports: [],
+  templateUrl: './modules.component.html',
+  styleUrl: './modules.component.scss'
+})
+export class ModulesComponent {
+
+}
+
+===== FILE: src\app\features\admin\payments\payments.component.html =====
+<p>payments works!</p>
+
+===== FILE: src\app\features\admin\payments\payments.component.scss =====
+
+===== FILE: src\app\features\admin\payments\payments.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PaymentsComponent } from './payments.component';
+
+describe('PaymentsComponent', () => {
+  let component: PaymentsComponent;
+  let fixture: ComponentFixture<PaymentsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PaymentsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PaymentsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\payments\payments.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-payments',
+  standalone: true,
+  imports: [],
+  templateUrl: './payments.component.html',
+  styleUrl: './payments.component.scss'
+})
+export class PaymentsComponent {
+
+}
+
+===== FILE: src\app\features\admin\portfolio\portfolio.component.html =====
+<p>portfolio works!</p>
+
+===== FILE: src\app\features\admin\portfolio\portfolio.component.scss =====
+
+===== FILE: src\app\features\admin\portfolio\portfolio.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PortfolioComponent } from './portfolio.component';
+
+describe('PortfolioComponent', () => {
+  let component: PortfolioComponent;
+  let fixture: ComponentFixture<PortfolioComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PortfolioComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PortfolioComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\portfolio\portfolio.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-portfolio',
+  standalone: true,
+  imports: [],
+  templateUrl: './portfolio.component.html',
+  styleUrl: './portfolio.component.scss'
+})
+export class PortfolioComponent {
+
+}
+
+===== FILE: src\app\features\admin\reservations\reservations.component.html =====
+<p>reservations works!</p>
+
+===== FILE: src\app\features\admin\reservations\reservations.component.scss =====
+
+===== FILE: src\app\features\admin\reservations\reservations.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ReservationsComponent } from './reservations.component';
+
+describe('ReservationsComponent', () => {
+  let component: ReservationsComponent;
+  let fixture: ComponentFixture<ReservationsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReservationsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ReservationsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\reservations\reservations.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-reservations',
+  standalone: true,
+  imports: [],
+  templateUrl: './reservations.component.html',
+  styleUrl: './reservations.component.scss'
+})
+export class ReservationsComponent {
+
+}
+
+===== FILE: src\app\features\admin\settings\settings.component.html =====
+<p>settings works!</p>
+
+===== FILE: src\app\features\admin\settings\settings.component.scss =====
+
+===== FILE: src\app\features\admin\settings\settings.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SettingsComponent } from './settings.component';
+
+describe('SettingsComponent', () => {
+  let component: SettingsComponent;
+  let fixture: ComponentFixture<SettingsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SettingsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(SettingsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\settings\settings.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-settings',
+  standalone: true,
+  imports: [],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.scss'
+})
+export class SettingsComponent {
+
+}
+
+===== FILE: src\app\features\admin\users\users.component.html =====
+<p>users works!</p>
+
+===== FILE: src\app\features\admin\users\users.component.scss =====
+
+===== FILE: src\app\features\admin\users\users.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { UsersComponent } from './users.component';
+
+describe('UsersComponent', () => {
+  let component: UsersComponent;
+  let fixture: ComponentFixture<UsersComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [UsersComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(UsersComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\admin\users\users.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-users',
+  standalone: true,
+  imports: [],
+  templateUrl: './users.component.html',
+  styleUrl: './users.component.scss'
+})
+export class UsersComponent {
+
+}
+
+===== FILE: src\app\features\auth\forgot-password\forgot-password.component.html =====
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Mot de passe oubliÃ©</h1>
+    <p>Entrez votre adresse e-mail pour continuer.</p>
+
+    <form (ngSubmit)="submit()">
+      <label for="email">E-mail</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="Votre adresse e-mail"
+        required
+      />
+
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+
+      @if (message) {
+        <p class="success">{{ message }}</p>
+      }
+
+      <button type="submit">RÃ©initialiser</button>
+    </form>
+
+    <a routerLink="/login">Retour Ã  la connexion</a>
+  </div>
+</section>
+
+===== FILE: src\app\features\auth\forgot-password\forgot-password.component.scss =====
+.auth-page {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  padding: 3rem 1rem;
+}
+
+.auth-card {
+  width: min(100%, 480px);
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+}
+
+.auth-card h1 {
+  margin-bottom: .5rem;
+}
+
+.auth-card form {
+  display: grid;
+  gap: .75rem;
+  margin: 1.5rem 0;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.auth-card button {
+  padding: .9rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.error {
+  color: #c62828;
+}
+
+.success {
+  color: #2e7d32;
+}
+
+===== FILE: src\app\features\auth\forgot-password\forgot-password.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ForgotPasswordComponent } from './forgot-password.component';
+
+describe('ForgotPasswordComponent', () => {
+  let component: ForgotPasswordComponent;
+  let fixture: ComponentFixture<ForgotPasswordComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ForgotPasswordComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ForgotPasswordComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\auth\forgot-password\forgot-password.component.ts =====
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+
+@Component({
+  selector: 'app-forgot-password',
+  standalone: true,
+  imports: [FormsModule, RouterLink],
+  templateUrl: './forgot-password.component.html',
+  styleUrl: './forgot-password.component.scss'
+})
+export class ForgotPasswordComponent {
+  email = '';
+  message = '';
+  error = '';
+
+  constructor(
+    private auth: AuthService,
+    private notifications: NotificationService
+  ) {}
+
+  submit(): void {
+    this.message = '';
+    this.error = '';
+
+    if (!this.email) {
+      this.error = 'Veuillez saisir votre adresse e-mail.';
+      return;
+    }
+
+    const exists = this.auth.requestPasswordReset(this.email);
+
+    if (!exists) {
+      this.error = 'Aucun compte ne correspond Ã  cette adresse e-mail.';
+      return;
+    }
+
+    this.message =
+      'Votre demande a Ã©tÃ© prise en compte. La rÃ©initialisation sera disponible avec le backend.';
+    this.notifications.success('Demande de rÃ©initialisation enregistrÃ©e.');
+  }
+}
+
+===== FILE: src\app\features\auth\login\login.component.backup.ts =====
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule, RouterLink],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
+})
+export class LoginComponent {
+  email = '';
+  password = '';
+  error = '';
+  loading = false;
+
+  constructor(
+    private auth: AuthService,
+    private router: Router, private route: ActivatedRoute,
+    private notifications: NotificationService
+  ) {}
+
+  submit(): void {
+    this.error = '';
+
+    if (!this.email || !this.password) {
+      this.error = 'Veuillez remplir tous les champs.';
+      return;
+    }
+
+    this.loading = true;
+
+    this.auth.login({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: user => {
+        this.loading = false;
+
+        this.notifications.success('Connexion rÃ©ussie.');
+
+        if (user.role === 'admin') {
+          this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/admin/dashboard');
+        } else {
+          this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/espace-client/dashboard');
+        }
+      },
+      error: error => {
+        this.loading = false;
+
+        if (error?.status === 401) {
+          this.error = 'E-mail ou mot de passe incorrect.';
+        } else {
+          this.error = 'Impossible de contacter le serveur.';
+        }
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\auth\login\login.component.html =====
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Connexion</h1>
+    <p>Connectez-vous Ã  votre espace Miss Digital.</p>
+
+    <form (ngSubmit)="submit()">
+      <label for="email">E-mail</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="Votre adresse e-mail"
+        required
+      />
+
+      <label for="password">Mot de passe</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        placeholder="Votre mot de passe"
+        required
+      />
+
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <a routerLink="/forgot-password">Mot de passe oubliÃ© ?</a>
+    <p>
+      Pas encore de compte ?
+      <a routerLink="/register">CrÃ©er un compte</a>
+    </p>
+  </div>
+</section>
+
+===== FILE: src\app\features\auth\login\login.component.scss =====
+.auth-page {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  padding: 3rem 1rem;
+}
+
+.auth-card {
+  width: min(100%, 480px);
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+}
+
+.auth-card h1 {
+  margin-bottom: .5rem;
+}
+
+.auth-card form {
+  display: grid;
+  gap: .75rem;
+  margin: 1.5rem 0;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.auth-card button {
+  padding: .9rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.error {
+  color: #c62828;
+}
+
+.success {
+  color: #2e7d32;
+}
+
+===== FILE: src\app\features\auth\login\login.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { LoginComponent } from './login.component';
+
+describe('LoginComponent', () => {
+  let component: LoginComponent;
+  let fixture: ComponentFixture<LoginComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LoginComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\auth\login\login.component.ts =====
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
+})
+export class LoginComponent {
+  email = '';
+  password = '';
+  error = '';
+  loading = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
+
+  submit(): void {
+    this.login();
+  }
+
+  login(): void {
+    if (!this.email || !this.password) {
+      this.error = 'Veuillez renseigner votre adresse e-mail et votre mot de passe.';
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+
+    this.authService.login({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: () => {
+        const returnUrl =
+          this.route.snapshot.queryParamMap.get('returnUrl');
+
+        this.router.navigateByUrl(
+          returnUrl ||
+          (this.authService.isAdmin()
+            ? '/admin/dashboard'
+            : '/espace-client/dashboard')
+        );
+      },
+      error: () => {
+        this.error = 'E-mail ou mot de passe incorrect.';
+        this.loading = false;
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\auth\register\register.component.html =====
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>CrÃ©er un compte</h1>
+    <p>Rejoignez l'espace Miss Digital.</p>
+
+    <form (ngSubmit)="submit()">
+      <label for="firstName">PrÃ©nom *</label>
+      <input
+        id="firstName"
+        name="firstName"
+        [(ngModel)]="firstName"
+        required
+      />
+
+      <label for="lastName">Nom *</label>
+      <input
+        id="lastName"
+        name="lastName"
+        [(ngModel)]="lastName"
+        required
+      />
+
+      <label for="email">E-mail *</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="email"
+        required
+      />
+
+      <label for="phone">TÃ©lÃ©phone</label>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        [(ngModel)]="phone"
+      />
+
+      <label for="password">Mot de passe *</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        required
+      />
+
+      <label for="confirmPassword">Confirmer le mot de passe *</label>
+      <input
+        id="confirmPassword"
+        name="confirmPassword"
+        type="password"
+        [(ngModel)]="confirmPassword"
+        required
+      />
+
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+
+      <button type="submit">CrÃ©er mon compte</button>
+    </form>
+
+    <p>
+      DÃ©jÃ  inscrit ?
+      <a routerLink="/login">Se connecter</a>
+    </p>
+  </div>
+</section>
+
+===== FILE: src\app\features\auth\register\register.component.scss =====
+.auth-page {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  padding: 3rem 1rem;
+}
+
+.auth-card {
+  width: min(100%, 480px);
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+}
+
+.auth-card h1 {
+  margin-bottom: .5rem;
+}
+
+.auth-card form {
+  display: grid;
+  gap: .75rem;
+  margin: 1.5rem 0;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.auth-card button {
+  padding: .9rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.error {
+  color: #c62828;
+}
+
+.success {
+  color: #2e7d32;
+}
+
+===== FILE: src\app\features\auth\register\register.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { RegisterComponent } from './register.component';
+
+describe('RegisterComponent', () => {
+  let component: RegisterComponent;
+  let fixture: ComponentFixture<RegisterComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RegisterComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(RegisterComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\auth\register\register.component.ts =====
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [FormsModule, RouterLink],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.scss'
+})
+export class RegisterComponent {
+  firstName = '';
+  lastName = '';
+  email = '';
+  phone = '';
+  password = '';
+  confirmPassword = '';
+  error = '';
+  loading = false;
+
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private notifications: NotificationService
+  ) {}
+
+  submit(): void {
+    this.error = '';
+
+    if (
+      !this.firstName ||
+      !this.lastName ||
+      !this.email ||
+      !this.password ||
+      !this.confirmPassword
+    ) {
+      this.error = 'Veuillez remplir tous les champs obligatoires.';
+      return;
+    }
+
+    if (this.password.length < 8) {
+      this.error = 'Le mot de passe doit contenir au moins 8 caractÃ¨res.';
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.error = 'Les mots de passe ne correspondent pas.';
+      return;
+    }
+
+    this.loading = true;
+
+    this.auth.register({
+      first_name: this.firstName,
+      last_name: this.lastName,
+      email: this.email,
+      phone: this.phone,
+      password: this.password
+    }).subscribe({
+      next: () => {
+        this.loading = false;
+
+        this.notifications.success(
+          'Inscription rÃ©ussie. Vous pouvez maintenant vous connecter.'
+        );
+
+        this.router.navigate(['/connexion']);
+      },
+      error: error => {
+        this.loading = false;
+
+        if (error?.status === 400) {
+          if (error?.error?.email) {
+            this.error = 'Cette adresse e-mail est dÃ©jÃ  utilisÃ©e.';
+          } else {
+            this.error = 'Les informations saisies sont invalides.';
+          }
+        } else {
+          this.error = 'Impossible de contacter le serveur.';
+        }
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\public\about\about.component.html =====
+<p>about works!</p>
+
+===== FILE: src\app\features\public\about\about.component.scss =====
+
+===== FILE: src\app\features\public\about\about.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AboutComponent } from './about.component';
+
+describe('AboutComponent', () => {
+  let component: AboutComponent;
+  let fixture: ComponentFixture<AboutComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AboutComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(AboutComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\about\about.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-about',
+  standalone: true,
+  imports: [],
+  templateUrl: './about.component.html',
+  styleUrl: './about.component.scss'
+})
+export class AboutComponent {
+
+}
+
+===== FILE: src\app\features\public\contact\contact.component.html =====
+<p>contact works!</p>
+
+===== FILE: src\app\features\public\contact\contact.component.scss =====
+
+===== FILE: src\app\features\public\contact\contact.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ContactComponent } from './contact.component';
+
+describe('ContactComponent', () => {
+  let component: ContactComponent;
+  let fixture: ComponentFixture<ContactComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ContactComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ContactComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\contact\contact.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-contact',
+  standalone: true,
+  imports: [],
+  templateUrl: './contact.component.html',
+  styleUrl: './contact.component.scss'
+})
+export class ContactComponent {
+
+}
+
+===== FILE: src\app\features\public\expertises\expertises.component.html =====
+<p>expertises works!</p>
+
+===== FILE: src\app\features\public\expertises\expertises.component.scss =====
+
+===== FILE: src\app\features\public\expertises\expertises.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ExpertisesComponent } from './expertises.component';
+
+describe('ExpertisesComponent', () => {
+  let component: ExpertisesComponent;
+  let fixture: ComponentFixture<ExpertisesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ExpertisesComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ExpertisesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\expertises\expertises.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-expertises',
+  standalone: true,
+  imports: [],
+  templateUrl: './expertises.component.html',
+  styleUrl: './expertises.component.scss'
+})
+export class ExpertisesComponent {
+
+}
+
+===== FILE: src\app\features\public\fondatrice\fondatrice.component.html =====
+<p>fondatrice works!</p>
+
+===== FILE: src\app\features\public\fondatrice\fondatrice.component.scss =====
+
+===== FILE: src\app\features\public\fondatrice\fondatrice.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FondatriceComponent } from './fondatrice.component';
+
+describe('FondatriceComponent', () => {
+  let component: FondatriceComponent;
+  let fixture: ComponentFixture<FondatriceComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FondatriceComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(FondatriceComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\fondatrice\fondatrice.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-fondatrice',
+  standalone: true,
+  imports: [],
+  templateUrl: './fondatrice.component.html',
+  styleUrl: './fondatrice.component.scss'
+})
+export class FondatriceComponent {
+
+}
+
+===== FILE: src\app\features\public\formation-detail\formation-detail.component.html =====
+<p>formation-detail works!</p>
+
+===== FILE: src\app\features\public\formation-detail\formation-detail.component.scss =====
+
+===== FILE: src\app\features\public\formation-detail\formation-detail.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FormationDetailComponent } from './formation-detail.component';
+
+describe('FormationDetailComponent', () => {
+  let component: FormationDetailComponent;
+  let fixture: ComponentFixture<FormationDetailComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FormationDetailComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(FormationDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\formation-detail\formation-detail.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-formation-detail',
+  standalone: true,
+  imports: [],
+  templateUrl: './formation-detail.component.html',
+  styleUrl: './formation-detail.component.scss'
+})
+export class FormationDetailComponent {
+
+}
+
+===== FILE: src\app\features\public\formations\formations.component.html =====
+<section class="academy-page">
+  <div class="academy-hero">
+    <div class="hero-content">
+      <span class="eyebrow">MDT ACADEMY</span>
+      <h1>DÃ©veloppez vos compÃ©tences.<br><strong>Construisez votre avenir.</strong></h1>
+      <p>Des formations pratiques pensÃ©es pour vous permettre de maÃ®triser les compÃ©tences numÃ©riques les plus utiles.</p>
+    </div>
+  </div>
+
+  <div class="formations-container">
+    <div class="section-heading">
+      <div>
+        <span class="section-label">NOS PROGRAMMES</span>
+        <h2>Choisissez votre formation</h2>
+      </div>
+      <p>Apprenez avec des parcours concrets et orientÃ©s vers la pratique.</p>
+    </div>
+
+    <div *ngIf="loading" class="state-box">
+      <div class="loader"></div>
+      <p>Chargement des formations...</p>
+    </div>
+
+    <div *ngIf="error" class="state-box error">
+      <p>{{ error }}</p>
+      <button class="btn-primary" (click)="loadFormations()">RÃ©essayer</button>
+    </div>
+
+    <div *ngIf="!loading && !error" class="formation-grid">
+      <article class="formation-card" *ngFor="let formation of formations">
+        <div class="card-top">
+          <span class="category">{{ formation.category || 'Formation professionnelle' }}</span>
+          <span class="availability" *ngIf="formation.available">Disponible</span>
+        </div>
+
+        <div class="card-icon">MDT</div>
+
+        <h3>{{ formation.title }}</h3>
+        <p class="description">{{ formation.description }}</p>
+
+        <div class="formation-meta">
+          <span>â± {{ formation.duration || 'Ã€ dÃ©finir' }}</span>
+          <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong>
+        </div>
+
+        <a class="btn-primary full" [routerLink]="['/formations', formation.id]">
+          Voir la formation <span>â†’</span>
+        </a>
+      </article>
+    </div>
+  </div>
+</section>
+
+===== FILE: src\app\features\public\formations\formations.component.scss =====
+ .academy-page {
+  min-height: 100vh;
+  background: #f7f8fc;
+}
+
+.academy-hero {
+  padding: 100px 7%;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 55%, #312e81 100%);
+  color: white;
+}
+
+.hero-content {
+  max-width: 850px;
+  margin: auto;
+}
+
+.eyebrow,
+.section-label {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #8b5cf6;
+  margin-bottom: 15px;
+}
+
+.eyebrow {
+  color: #c4b5fd;
+}
+
+.hero-content h1 {
+  font-size: clamp(38px, 6vw, 68px);
+  line-height: 1.05;
+  margin: 0 0 25px;
+}
+
+.hero-content h1 strong {
+  color: #c4b5fd;
+}
+
+.hero-content p {
+  max-width: 650px;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #d1d5db;
+}
+
+.formations-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 75px 25px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: end;
+  margin-bottom: 45px;
+}
+
+.section-heading h2 {
+  font-size: 38px;
+  margin: 0;
+  color: #111827;
+}
+
+.section-heading p {
+  max-width: 430px;
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.formation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.formation-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, .06);
+  transition: .3s ease;
+}
+
+.formation-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, .12);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.category {
+  color: #7c3aed;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.availability {
+  color: #059669;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.card-icon {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  margin: 30px 0 22px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.formation-card h3 {
+  font-size: 23px;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.description {
+  color: #6b7280;
+  line-height: 1.65;
+  min-height: 75px;
+}
+
+.formation-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 25px 0;
+  color: #6b7280;
+}
+
+.formation-meta strong {
+  color: #111827;
+  font-size: 18px;
+}
+
+.btn-primary {
+  border: 0;
+  border-radius: 12px;
+  padding: 14px 21px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: .25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(79, 70, 229, .25);
+}
+
+.btn-primary.full {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.state-box {
+  padding: 60px;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.loader {
+  width: 35px;
+  height: 35px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  margin: auto auto 15px;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 700px) {
+  .academy-hero {
+    padding: 70px 25px;
+  }
+
+  .section-heading {
+    display: block;
+  }
+
+  .section-heading h2 {
+    font-size: 30px;
+  }
+}
+
+===== FILE: src\app\features\public\formations\formations.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FormationsComponent } from './formations.component';
+
+describe('FormationsComponent', () => {
+  let component: FormationsComponent;
+  let fixture: ComponentFixture<FormationsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FormationsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(FormationsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\formations\formations.component.ts =====
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { Formation, FormationService } from '../../../core/services/formation.service';
+
+@Component({
+  selector: 'app-formations',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './formations.component.html',
+  styleUrl: './formations.component.scss'
+})
+export class FormationsComponent implements OnInit {
+
+  formations: Formation[] = [];
+  loading = true;
+  error = '';
+
+  constructor(private formationService: FormationService) {}
+
+  ngOnInit(): void {
+    this.loadFormations();
+  }
+
+  loadFormations(): void {
+    this.loading = true;
+    this.error = '';
+
+    this.formationService.getFormations().subscribe({
+      next: formations => {
+        this.formations = formations;
+        this.loading = false;
+      },
+      error: error => {
+        console.error('Erreur formations:', error);
+        this.error = 'Impossible de charger les formations.';
+        this.loading = false;
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\public\formations\formation-detail\formation-detail.component.html =====
+<section class="detail-page">
+
+  <div *ngIf="loading" class="state">
+    <div class="loader"></div>
+    <p>Chargement de la formation...</p>
+  </div>
+
+  <div *ngIf="error && !formation" class="state error">
+    <h2>{{ error }}</h2>
+    <a routerLink="/formations" class="btn-primary">â† Retour aux formations</a>
+  </div>
+
+  <ng-container *ngIf="formation">
+
+    <div class="detail-hero">
+      <div class="hero-inner">
+        <a routerLink="/formations" class="back-link">â† Toutes les formations</a>
+
+        <span class="category">{{ formation.category || 'MDT ACADEMY' }}</span>
+
+        <h1>{{ formation.title }}</h1>
+
+        <p>{{ formation.description }}</p>
+
+        <div class="hero-info">
+          <div>
+            <small>DURÃ‰E</small>
+            <strong>{{ formation.duration || 'Ã€ dÃ©finir' }}</strong>
+          </div>
+
+          <div>
+            <small>INVESTISSEMENT</small>
+            <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong>
+          </div>
+
+          <div>
+            <small>STATUT</small>
+            <strong>{{ formation.available ? 'Disponible' : 'Indisponible' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-container">
+
+      <div class="content">
+        <span class="section-label">MDT ACADEMY</span>
+        <h2>Une formation orientÃ©e pratique</h2>
+
+        <p>
+          DÃ©veloppez des compÃ©tences concrÃ¨tes grÃ¢ce Ã  un parcours pensÃ© pour
+          rÃ©pondre aux besoins actuels du numÃ©rique.
+        </p>
+
+        <div class="benefits">
+          <div>âœ“ Approche pratique</div>
+          <div>âœ“ Accompagnement professionnel</div>
+          <div>âœ“ CompÃ©tences directement applicables</div>
+          <div>âœ“ Parcours adaptÃ© aux objectifs professionnels</div>
+        </div>
+      </div>
+
+      <aside class="reservation-card">
+
+        <div class="price">
+          <small>INVESTISSEMENT</small>
+          <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong>
+        </div>
+
+        <div *ngIf="!authService.isLoggedIn()" class="login-required">
+          <h3>PrÃªt Ã  commencer ?</h3>
+          <p>Connectez-vous pour rÃ©server cette formation.</p>
+          <a [routerLink]="['/login']" [queryParams]="{returnUrl: '/formations/' + formation.id}" class="btn-primary full">Se connecter â†’</a>
+          <a routerLink="/register" class="register-link">CrÃ©er mon compte</a>
+        </div>
+
+        <form *ngIf="authService.isLoggedIn()" (ngSubmit)="reserver()">
+
+          <h3>RÃ©server ma place</h3>
+
+          <label for="date">Date souhaitÃ©e</label>
+          <input id="date" type="date" [(ngModel)]="date" name="date" required>
+
+          <label for="time">Heure souhaitÃ©e</label>
+          <input id="time" type="time" [(ngModel)]="time" name="time">
+
+          <label for="notes">Message / prÃ©cision</label>
+          <textarea
+            id="notes"
+            [(ngModel)]="notes"
+            name="notes"
+            rows="4"
+            placeholder="Une prÃ©cision concernant votre rÃ©servation..."
+          ></textarea>
+
+          <button
+            type="submit"
+            class="btn-primary full"
+            [disabled]="submitting"
+          >
+            {{ submitting ? 'Enregistrement...' : 'RÃ©server maintenant â†’' }}
+          </button>
+
+          <div *ngIf="success" class="success">{{ success }}</div>
+
+          <div *ngIf="reservationId !== null && formation.price > 0" class="payment-choice">
+            <h3>Choisir un moyen de paiement</h3>
+            <p>Montant : <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong></p>
+
+            <label for="paymentMethod">Moyen de paiement</label>
+            <select id="paymentMethod" name="paymentMethod" [(ngModel)]="paymentMethod">
+              <option value="wave">Wave</option>
+              <option value="orange_money">Orange Money</option>
+            </select>
+
+            <button type="button" class="btn-primary full"
+              [disabled]="paymentSubmitting"
+              (click)="preparerPaiement()">
+              {{ paymentSubmitting ? 'Enregistrement...' : 'Continuer vers le paiement' }}
+            </button>
+
+            <p *ngIf="paymentMessage" class="success">{{ paymentMessage }}</p>
+            <p *ngIf="paymentError" class="form-error">{{ paymentError }}</p>
+          </div>
+          <div *ngIf="reservationId !== null && formation.price <= 0" class="success">
+            Cette formation est gratuite. Votre rÃ©servation est enregistrÃ©e, aucun paiement n'est nÃ©cessaire.
+          </div>
+          <div *ngIf="error" class="form-error">{{ error }}</div>
+
+        </form>
+
+      </aside>
+
+    </div>
+  </ng-container>
+</section>
+
+===== FILE: src\app\features\public\formations\formation-detail\formation-detail.component.scss =====
+ .detail-page {
+  min-height: 100vh;
+  background: #f7f8fc;
+}
+
+.detail-hero {
+  background: linear-gradient(135deg, #111827, #312e81);
+  color: white;
+  padding: 70px 25px;
+}
+
+.hero-inner {
+  max-width: 1150px;
+  margin: auto;
+}
+
+.back-link {
+  color: #c4b5fd;
+  text-decoration: none;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 50px;
+}
+
+.category,
+.section-label {
+  color: #a78bfa;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.detail-hero h1 {
+  max-width: 850px;
+  font-size: clamp(40px, 6vw, 65px);
+  line-height: 1.05;
+  margin: 15px 0 20px;
+}
+
+.detail-hero p {
+  max-width: 700px;
+  color: #d1d5db;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.hero-info {
+  display: flex;
+  gap: 55px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.hero-info div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.hero-info small,
+.price small {
+  color: #9ca3af;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.hero-info strong {
+  font-size: 17px;
+}
+
+.detail-container {
+  max-width: 1150px;
+  margin: auto;
+  padding: 70px 25px;
+  display: grid;
+  grid-template-columns: 1fr 390px;
+  gap: 70px;
+  align-items: start;
+}
+
+.content h2 {
+  font-size: 38px;
+  color: #111827;
+  margin: 15px 0 20px;
+}
+
+.content > p {
+  color: #6b7280;
+  font-size: 17px;
+  line-height: 1.8;
+  max-width: 650px;
+}
+
+.benefits {
+  display: grid;
+  gap: 15px;
+  margin-top: 35px;
+}
+
+.benefits div {
+  background: white;
+  padding: 18px 20px;
+  border-radius: 12px;
+  color: #374151;
+  font-weight: 700;
+  border: 1px solid #e5e7eb;
+}
+
+.reservation-card {
+  background: white;
+  border-radius: 22px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .12);
+  border: 1px solid #e5e7eb;
+}
+
+.price {
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price strong {
+  font-size: 30px;
+  color: #111827;
+}
+
+.reservation-card h3 {
+  font-size: 23px;
+  color: #111827;
+  margin-top: 0;
+}
+
+.reservation-card p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.reservation-card label {
+  display: block;
+  color: #374151;
+  font-weight: 700;
+  font-size: 14px;
+  margin: 18px 0 7px;
+}
+
+.reservation-card input,
+.reservation-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 13px;
+  font: inherit;
+  outline: none;
+}
+
+.reservation-card input:focus,
+.reservation-card textarea:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, .1);
+}
+
+.btn-primary {
+  border: 0;
+  border-radius: 12px;
+  padding: 14px 21px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: .25s;
+  box-sizing: border-box;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(79, 70, 229, .25);
+}
+
+.btn-primary.full {
+  width: 100%;
+}
+
+.register-link {
+  display: block;
+  text-align: center;
+  margin-top: 18px;
+  color: #7c3aed;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.success {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #ecfdf5;
+  color: #047857;
+  font-weight: 700;
+}
+
+.form-error {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.state {
+  padding: 100px 25px;
+  text-align: center;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.loader {
+  width: 38px;
+  height: 38px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  margin: auto auto 15px;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 850px) {
+  .detail-container {
+    grid-template-columns: 1fr;
+  }
+
+  .reservation-card {
+    max-width: 600px;
+  }
+}
+
+===== FILE: src\app\features\public\formations\formation-detail\formation-detail.component.ts =====
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Formation, FormationService } from '../../../../core/services/formation.service';
+import { ReservationService } from '../../../../core/services/reservation.service';
+import { PaymentService } from '../../../../core/services/payment.service';
+import { AuthService } from '../../../../core/services/auth.service';
+
+@Component({
+  selector: 'app-formation-detail',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './formation-detail.component.html',
+  styleUrl: './formation-detail.component.scss'
+})
+export class FormationDetailComponent implements OnInit {
+  formation: Formation | null = null;
+  loading = true;
+  error = '';
+  success = '';
+  date = '';
+  time = '';
+  notes = '';
+  submitting = false;
+
+  reservationId: number | null = null;
+  paymentMethod: 'wave' | 'orange_money' = 'wave';
+  paymentSubmitting = false;
+  paymentMessage = '';
+  paymentError = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private formationService: FormationService,
+    private reservationService: ReservationService,
+    private paymentService: PaymentService,
+    public authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (!id) {
+      this.error = 'Formation introuvable.';
+      this.loading = false;
+      return;
+    }
+
+    this.formationService.getFormation(id).subscribe({
+      next: formation => {
+        this.formation = formation;
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Impossible de charger cette formation.';
+        this.loading = false;
+      }
+    });
+  }
+
+  reserver(): void {
+    if (!this.formation || !this.date || this.submitting) return;
+
+    this.submitting = true;
+    this.error = '';
+    this.success = '';
+    this.paymentMessage = '';
+    this.paymentError = '';
+    this.reservationId = null;
+
+    this.reservationService.createReservation({
+      formation: this.formation.id,
+      date: this.date,
+      ...(this.time ? { time: this.time } : {}),
+      notes: this.notes
+    }).subscribe({
+      next: reservation => {
+        this.reservationId = reservation.id;
+        this.success = 'RÃ©servation enregistrÃ©e. Vous pouvez maintenant prÃ©parer votre paiement.';
+        this.submitting = false;
+        this.date = '';
+        this.time = '';
+        this.notes = '';
+      },
+      error: err => {
+        console.error('Erreur rÃ©servation :', err);
+        const detail = err?.error;
+        this.error = detail?.date?.[0] ||
+          detail?.time?.[0] ||
+          detail?.formation?.[0] ||
+          detail?.detail ||
+          'Impossible dâ€™enregistrer la rÃ©servation. VÃ©rifiez les champs saisis.';
+        this.submitting = false;
+      }
+    });
+  }
+
+  preparerPaiement(): void {
+    const reservationId = this.reservationId;
+    if (reservationId === null || this.paymentSubmitting) return;
+
+    this.paymentSubmitting = true;
+    this.paymentError = '';
+    this.paymentMessage = '';
+
+    this.paymentService.createPayment({
+      reservation: reservationId,
+      method: this.paymentMethod
+    }).subscribe({
+      next: () => {
+        this.paymentMessage =
+          'Demande de paiement enregistrÃ©e en attente. Le paiement en ligne sera activÃ© aprÃ¨s la configuration du compte marchand.';
+        this.paymentSubmitting = false;
+      },
+      error: err => {
+        console.error('Erreur paiement :', err);
+        this.paymentError = err?.error?.detail ||
+          err?.error?.reservation?.[0] ||
+          err?.error?.method?.[0] ||
+          'Impossible de crÃ©er la demande de paiement. RÃ©essayez.';
+        this.paymentSubmitting = false;
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\public\home\home.component.html =====
+<section class="hero">
+
+  <div class="hero-glow"></div>
+
+  <div class="container hero-container">
+
+    <div class="hero-content">
+
+      <span class="hero-label">
+        MISS DIGITAL TECH
+      </span>
+
+      <h1>
+        Lâ€™innovation au service
+        <span>de votre rÃ©ussite.</span>
+      </h1>
+
+      <p>
+        Nous accompagnons les entreprises, organisations et entrepreneurs
+        dans leur transformation digitale grÃ¢ce Ã  des solutions modernes,
+        crÃ©atives et adaptÃ©es Ã  leurs ambitions.
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/contact" class="btn btn-primary">
+          DÃ©marrer un projet
+        </a>
+
+        <a routerLink="/expertises" class="btn btn-outline">
+          DÃ©couvrir nos expertises
+        </a>
+      </div>
+
+    </div>
+
+    <div class="hero-visual">
+
+      <div class="hero-card">
+        <span>MDT</span>
+        <strong>Digital<br>Excellence</strong>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="intro section">
+
+  <div class="container intro-grid">
+
+    <div>
+      <span class="section-label">NOTRE VISION</span>
+
+      <h2 class="section-title">
+        Le digital pensÃ©
+        <span class="gold">autrement.</span>
+      </h2>
+    </div>
+
+    <div>
+      <p>
+        Miss Digital Tech est un Ã©cosystÃ¨me digital qui rassemble
+        technologie, communication, crÃ©ativitÃ©, formation, mÃ©dia
+        et Ã©quipements.
+      </p>
+
+      <p>
+        Notre ambition est simple : transformer les idÃ©es en solutions
+        concrÃ¨tes et accompagner chaque projet vers une rÃ©ussite durable.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="expertises section">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <span class="section-label">NOS UNIVERS</span>
+
+      <h2 class="section-title">
+        Les pÃ´les <span class="gold">MDT</span>
+      </h2>
+
+      <p>
+        Un Ã©cosystÃ¨me complet pour rÃ©pondre aux diffÃ©rents besoins
+        de votre activitÃ©.
+      </p>
+
+    </div>
+
+
+    <div class="expertise-grid">
+
+      <article class="expertise-card">
+        <span>01</span>
+        <h3>MDT TECH</h3>
+        <p>
+          DÃ©veloppement web, applications, e-commerce,
+          API, IA, cybersÃ©curitÃ©, cloud et rÃ©seaux.
+        </p>
+        <a routerLink="/tech">DÃ©couvrir â†’</a>
+      </article>
+
+
+      <article class="expertise-card">
+        <span>02</span>
+        <h3>MDT COM</h3>
+        <p>
+          Communication digitale, community management,
+          publicitÃ©, branding et stratÃ©gie social media.
+        </p>
+        <a routerLink="/com">DÃ©couvrir â†’</a>
+      </article>
+
+
+      <article class="expertise-card">
+        <span>03</span>
+        <h3>MDT PRINT</h3>
+        <p>
+          IdentitÃ© visuelle, infographie, supports de communication
+          et impression professionnelle.
+        </p>
+        <a routerLink="/print">DÃ©couvrir â†’</a>
+      </article>
+
+
+      <article class="expertise-card">
+        <span>04</span>
+        <h3>MDT MEDIA</h3>
+        <p>
+          CrÃ©ation de contenu, podcast, interviews,
+          Ã©missions et communication audiovisuelle.
+        </p>
+        <a routerLink="/media">DÃ©couvrir â†’</a>
+      </article>
+
+
+      <article class="expertise-card">
+        <span>05</span>
+        <h3>MDT ACADEMY</h3>
+        <p>
+          Formations pratiques en digital, technologie,
+          entrepreneuriat et compÃ©tences professionnelles.
+        </p>
+        <a routerLink="/academy">DÃ©couvrir â†’</a>
+      </article>
+
+
+      <article class="expertise-card">
+        <span>06</span>
+        <h3>MDT EQUIP</h3>
+        <p>
+          Ã‰quipements et solutions adaptÃ©s aux Ã©tudiants,
+          professionnels et crÃ©ateurs.
+        </p>
+        <a routerLink="/equip">DÃ©couvrir â†’</a>
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="cta section">
+
+  <div class="container cta-box">
+
+    <span>VOTRE PROJET COMMENCE ICI</span>
+
+    <h2>
+      Donnons vie Ã  vos
+      <strong>ambitions.</strong>
+    </h2>
+
+    <a routerLink="/contact" class="btn btn-primary">
+      Parlons de votre projet
+    </a>
+
+  </div>
+
+</section>
+
+===== FILE: src\app\features\public\home\home.component.scss =====
+.hero {
+  min-height: 720px;
+  background: var(--mdt-black);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  right: -200px;
+  top: -150px;
+  background: rgba(201, 162, 39, 0.12);
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+.hero-container {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 80px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-label,
+.section-label {
+  color: var(--mdt-gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.hero h1 {
+  font-family: var(--font-title);
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 1;
+  margin: 25px 0;
+  max-width: 800px;
+}
+
+.hero h1 span {
+  color: var(--mdt-gold);
+  display: block;
+}
+
+.hero p {
+  color: #cfcfcf;
+  max-width: 650px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 35px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--mdt-gold);
+  color: var(--mdt-black);
+}
+
+.btn-primary:hover {
+  background: var(--mdt-gold-light);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.btn-outline:hover {
+  border-color: var(--mdt-gold);
+  color: var(--mdt-gold);
+}
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-card {
+  width: 330px;
+  height: 400px;
+  border: 1px solid var(--mdt-border);
+  background: linear-gradient(
+    145deg,
+    #171717,
+    #0b0b0b
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+}
+
+.hero-card span {
+  font-family: var(--font-title);
+  font-size: 5rem;
+  color: var(--mdt-gold);
+  font-weight: 700;
+}
+
+.hero-card strong {
+  font-family: var(--font-title);
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+
+.intro {
+  background: var(--mdt-ivory);
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+}
+
+.intro h2 {
+  margin-top: 20px;
+}
+
+.intro p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+
+.expertises {
+  background: white;
+}
+
+.section-heading {
+  max-width: 700px;
+  margin-bottom: 60px;
+}
+
+.section-heading h2 {
+  margin: 20px 0;
+}
+
+.section-heading p {
+  color: var(--mdt-gray);
+}
+
+
+.expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.expertise-card {
+  padding: 35px;
+  min-height: 290px;
+  border: 1px solid #e7e7e7;
+  transition: 0.3s ease;
+  position: relative;
+}
+
+.expertise-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--mdt-gold);
+  box-shadow: var(--shadow);
+}
+
+.expertise-card > span {
+  color: var(--mdt-gold);
+  font-weight: 700;
+}
+
+.expertise-card h3 {
+  font-family: var(--font-title);
+  font-size: 1.7rem;
+  margin: 25px 0 15px;
+}
+
+.expertise-card p {
+  color: var(--mdt-gray);
+}
+
+.expertise-card a {
+  display: inline-block;
+  margin-top: 25px;
+  color: var(--mdt-gold);
+  font-weight: 700;
+}
+
+
+.cta {
+  background: var(--mdt-black);
+  color: white;
+}
+
+.cta-box {
+  text-align: center;
+  padding: 80px 30px;
+  border: 1px solid var(--mdt-border);
+}
+
+.cta-box > span {
+  color: var(--mdt-gold);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+}
+
+.cta h2 {
+  font-family: var(--font-title);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  margin: 20px auto 35px;
+}
+
+.cta h2 strong {
+  color: var(--mdt-gold);
+}
+
+
+@media (max-width: 900px) {
+
+  .hero-container,
+  .intro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 100px 0;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .expertise-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .hero h1 {
+    font-size: 3rem;
+  }
+
+  .expertise-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+===== FILE: src\app\features\public\home\home.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { HomeComponent } from './home.component';
+
+describe('HomeComponent', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HomeComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\home\home.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
+})
+export class HomeComponent {
+
+}
+
+===== FILE: src\app\features\public\poles\pole-page.component.html =====
+<section class="pole-hero" *ngIf="pole">
+  <div class="pole-container">
+    <a routerLink="/" class="back-link">â† Retour Ã  lâ€™accueil</a>
+    <span class="eyebrow">{{ pole.name }} Â· PÃ”LE {{ pole.number }}</span>
+    <h1>{{ pole.title }}</h1>
+    <p class="lead">{{ pole.intro }}</p>
+    <div class="actions">
+      <a routerLink="/contact" class="btn primary">Parler de votre projet</a>
+      <a routerLink="/reserver" class="btn secondary" *ngIf="pole.name === 'MDT ACADEMY'">RÃ©server une formation</a>
+    </div>
+  </div>
+</section>
+
+<section class="pole-section" *ngIf="pole">
+  <div class="pole-container">
+    <span class="eyebrow">NOS SOLUTIONS</span>
+    <h2>Comment pouvons-nous vous accompagner ?</h2>
+    <p class="section-intro">DÃ©couvrez les services proposÃ©s par {{ pole.name }}. Contactez-nous pour adapter la solution Ã  vos besoins.</p>
+    <div class="service-grid">
+      <article class="service-card" *ngFor="let service of pole.services; let i = index">
+        <span class="service-number">{{ (i + 1).toString().padStart(2, '0') }}</span>
+        <h3>{{ service }}</h3>
+        <p>Une solution pensÃ©e selon votre projet, vos besoins et vos objectifs.</p>
+        <a routerLink="/contact">Demander des informations â†’</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="pole-cta" *ngIf="pole">
+  <div class="pole-container">
+    <h2>Construisons la suite ensemble.</h2>
+    <p>PrÃ©sentez-nous votre besoin et nous Ã©tudierons la solution la plus adaptÃ©e.</p>
+    <a routerLink="/contact" class="btn primary">Contacter Miss Digital Tech</a>
+  </div>
+</section>
+
+===== FILE: src\app\features\public\poles\pole-page.component.scss =====
+:host { display: block; color: #202020; }
+.pole-container { width: min(1120px, 90%); margin: auto; }
+.pole-hero { padding: 90px 0 80px; background: linear-gradient(135deg, #10151d, #242a32); color: white; }
+.back-link { display: inline-block; margin-bottom: 42px; color: #f0c674; text-decoration: none; }
+.eyebrow { display: block; color: #b88a38; font-size: .78rem; font-weight: 800; letter-spacing: .16em; margin-bottom: 18px; }
+.pole-hero .eyebrow { color: #f0c674; }
+h1 { max-width: 850px; font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: 1.08; margin: 0 0 24px; }
+.lead { max-width: 720px; font-size: 1.12rem; line-height: 1.8; color: #e0e2e5; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.btn { display: inline-block; padding: 14px 22px; border-radius: 5px; text-decoration: none; font-weight: 700; }
+.primary { background: #c49a4a; color: #171717; }
+.secondary { border: 1px solid #d4b16e; color: white; }
+.pole-section { padding: 76px 0; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.2; margin: 0 0 18px; }
+.section-intro { max-width: 700px; line-height: 1.8; color: #666; margin-bottom: 32px; }
+.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 20px; margin-top: 34px; }
+.service-card { padding: 26px; border: 1px solid #e8e4dc; border-radius: 10px; background: #fff; }
+.service-number { color: #b88a38; font-weight: 800; }
+.service-card h3 { margin: 16px 0 10px; }
+.service-card p { color: #666; line-height: 1.65; }
+.service-card a { color: #78571c; font-weight: 700; text-decoration: none; }
+.pole-cta { padding: 65px 0; background: #f6f3ed; }
+.pole-cta p { line-height: 1.7; margin-bottom: 25px; }
+@media (max-width: 600px) { .pole-hero { padding: 55px 0; } .back-link { margin-bottom: 28px; } }
+
+===== FILE: src\app\features\public\poles\pole-page.component.ts =====
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-pole-page',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './pole-page.component.html',
+  styleUrl: './pole-page.component.scss'
+})
+export class PolePageComponent {
+  pole: any;
+
+  private readonly poles: Record<string, any> = {
+    tech: {
+      number: '01',
+      name: 'MDT TECH',
+      title: 'La technologie au service de vos ambitions.',
+      intro: 'Nous transformons vos idÃ©es en solutions numÃ©riques fiables, modernes et adaptÃ©es Ã  vos objectifs.',
+      services: ['CrÃ©ation de sites web', 'Applications web et mobiles', 'E-commerce et API REST', 'Intelligence artificielle', 'CybersÃ©curitÃ© et rÃ©seaux', 'Cloud, maintenance et accompagnement']
+    },
+    com: {
+      number: '02',
+      name: 'MDT COM',
+      title: 'Donner du sens Ã  votre communication.',
+      intro: 'Nous aidons les marques et les organisations Ã  construire une prÃ©sence cohÃ©rente, visible et professionnelle.',
+      services: ['IdentitÃ© visuelle et branding', 'Community management', 'StratÃ©gie social media', 'PublicitÃ© digitale', 'CrÃ©ation de contenus', 'Conseil en communication']
+    },
+    print: {
+      number: '03',
+      name: 'MDT PRINT',
+      title: 'Des supports qui portent votre image.',
+      intro: 'Des crÃ©ations graphiques soignÃ©es pour rendre votre identitÃ© reconnaissable sur tous vos supports.',
+      services: ['Cartes de visite', 'Flyers et affiches', 'Conception graphique', 'Supports professionnels', 'Visuels publicitaires', 'PrÃ©paration des fichiers dâ€™impression']
+    },
+    media: {
+      number: '04',
+      name: 'MDT MEDIA',
+      title: 'Raconter vos idÃ©es avec impact.',
+      intro: 'Nous imaginons des contenus audiovisuels qui valorisent les personnes, les projets, les marques et les Ã©vÃ©nements.',
+      services: ['CrÃ©ation de contenus', 'Interviews et reportages', 'Podcast et Ã©missions', 'Photo et vidÃ©o', 'Couverture Ã©vÃ©nementielle', 'Communication audiovisuelle']
+    },
+    academy: {
+      number: '05',
+      name: 'MDT ACADEMY',
+      title: 'Apprendre. Pratiquer. Ã‰voluer.',
+      intro: 'Des parcours orientÃ©s vers la pratique pour dÃ©velopper des compÃ©tences numÃ©riques et professionnelles utiles.',
+      services: ['Initiation au numÃ©rique', 'DÃ©veloppement web', 'Bureautique et outils numÃ©riques', 'Communication digitale', 'Entrepreneuriat et e-commerce', 'Ateliers pratiques']
+    },
+    equip: {
+      number: '06',
+      name: 'MDT EQUIP',
+      title: 'Les bons Ã©quipements pour aller plus loin.',
+      intro: 'Nous accompagnons Ã©tudiants, entrepreneurs et professionnels dans le choix et la mise en service de leurs Ã©quipements.',
+      services: ['Ordinateurs et accessoires', 'Solutions de stockage', 'Ã‰quipements dâ€™impression', 'MatÃ©riel rÃ©seau', 'Installation et configuration', 'Maintenance et conseil']
+    }
+  };
+
+  constructor(private route: ActivatedRoute) {
+    this.route.data.subscribe(data => {
+      this.pole = this.poles[data['pole']] ?? this.poles['tech'];
+    });
+  }
+}
+
+===== FILE: src\app\features\public\portfolio\portfolio.component.html =====
+<p>portfolio works!</p>
+
+===== FILE: src\app\features\public\portfolio\portfolio.component.scss =====
+
+===== FILE: src\app\features\public\portfolio\portfolio.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PortfolioComponent } from './portfolio.component';
+
+describe('PortfolioComponent', () => {
+  let component: PortfolioComponent;
+  let fixture: ComponentFixture<PortfolioComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PortfolioComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PortfolioComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\portfolio\portfolio.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-portfolio',
+  standalone: true,
+  imports: [],
+  templateUrl: './portfolio.component.html',
+  styleUrl: './portfolio.component.scss'
+})
+export class PortfolioComponent {
+
+}
+
+===== FILE: src\app\features\public\reservation\reservation.component.html =====
+<p>reservation works!</p>
+
+===== FILE: src\app\features\public\reservation\reservation.component.scss =====
+
+===== FILE: src\app\features\public\reservation\reservation.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ReservationComponent } from './reservation.component';
+
+describe('ReservationComponent', () => {
+  let component: ReservationComponent;
+  let fixture: ComponentFixture<ReservationComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReservationComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ReservationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\public\reservation\reservation.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-reservation',
+  standalone: true,
+  imports: [],
+  templateUrl: './reservation.component.html',
+  styleUrl: './reservation.component.scss'
+})
+export class ReservationComponent {
+
+}
+
+===== FILE: src\app\features\user\courses\courses.component.html =====
+<p>courses works!</p>
+
+===== FILE: src\app\features\user\courses\courses.component.scss =====
+
+===== FILE: src\app\features\user\courses\courses.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { CoursesComponent } from './courses.component';
+
+describe('CoursesComponent', () => {
+  let component: CoursesComponent;
+  let fixture: ComponentFixture<CoursesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CoursesComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(CoursesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\courses\courses.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-courses',
+  standalone: true,
+  imports: [],
+  templateUrl: './courses.component.html',
+  styleUrl: './courses.component.scss'
+})
+export class CoursesComponent {
+
+}
+
+===== FILE: src\app\features\user\dashboard\dashboard.component.html =====
+<section class="client-page">
+  <div class="client-hero">
+    <div>
+      <span>ESPACE CLIENT</span>
+      <h1>Bienvenue, {{ auth.getCurrentUser()?.firstName || 'chez Miss Digital' }} ðŸ‘‹</h1>
+      <p>GÃ©rez vos formations, rÃ©servations et paiements depuis votre espace personnel.</p>
+    </div>
+  </div>
+
+  <div class="client-container">
+    <div class="stats">
+      <div class="stat">
+        <strong>{{ reservations.length }}</strong>
+        <span>RÃ©servations</span>
+      </div>
+      <div class="stat">
+        <strong>{{ payments.length }}</strong>
+        <span>Paiements</span>
+      </div>
+      <div class="stat">
+        <strong>MDT</strong>
+        <span>Academy</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a routerLink="/formations" class="action primary">ðŸŽ“ Voir les formations</a>
+      <a routerLink="/espace-client/reservations" class="action">ðŸ“… Mes rÃ©servations</a>
+      <a routerLink="/espace-client/payments" class="action">ðŸ’³ Mes paiements</a>
+    </div>
+
+    <div class="welcome-card">
+      <span>MDT ACADEMY</span>
+      <h2>Votre progression commence ici.</h2>
+      <p>Retrouvez vos rÃ©servations et suivez vos opÃ©rations depuis votre espace client.</p>
+      <a routerLink="/formations" class="btn">DÃ©couvrir les formations â†’</a>
+    </div>
+  </div>
+</section>
+
+===== FILE: src\app\features\user\dashboard\dashboard.component.scss =====
+ .client-page{min-height:100vh;background:#f7f8fc}
+.client-hero{padding:65px 7%;background:linear-gradient(135deg,#111827,#312e81);color:white}
+.client-hero>div{max-width:1150px;margin:auto}
+.client-hero span{font-size:12px;font-weight:800;letter-spacing:2px;color:#c4b5fd}
+.client-hero h1{font-size:clamp(34px,5vw,55px);margin:12px 0}
+.client-hero p{color:#d1d5db;font-size:17px}
+.client-container{max-width:1150px;margin:auto;padding:55px 25px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stat,.welcome-card{background:white;border:1px solid #e5e7eb;border-radius:20px;padding:25px;box-shadow:0 10px 30px #0000000a}
+.stat strong{display:block;font-size:30px;color:#111827}
+.stat span{color:#6b7280}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:30px 0}
+.action{padding:20px;border-radius:15px;background:white;border:1px solid #e5e7eb;text-decoration:none;color:#111827;font-weight:800}
+.action.primary,.btn{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white}
+.welcome-card{margin-top:30px}
+.welcome-card span{color:#7c3aed;font-size:12px;font-weight:800;letter-spacing:2px}
+.welcome-card h2{font-size:32px}
+.welcome-card p{color:#6b7280;line-height:1.7}
+.btn{display:inline-block;padding:14px 20px;border-radius:11px;text-decoration:none;font-weight:800}
+@media(max-width:700px){.stats,.actions{grid-template-columns:1fr}}
+
+===== FILE: src\app\features\user\dashboard\dashboard.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DashboardComponent } from './dashboard.component';
+
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DashboardComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\dashboard\dashboard.component.ts =====
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { ReservationService, Reservation } from '../../../core/services/reservation.service';
+import { PaymentService, Payment } from '../../../core/services/payment.service';
+
+@Component({
+  selector: 'app-user-dashboard',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
+})
+export class UserDashboardComponent implements OnInit {
+  reservations: Reservation[] = [];
+  payments: Payment[] = [];
+
+  constructor(
+    public auth: AuthService,
+    private reservationService: ReservationService,
+    private paymentService: PaymentService
+  ) {}
+
+  ngOnInit(): void {
+    this.reservationService.getReservations().subscribe({
+      next: data => this.reservations = data
+    });
+    this.paymentService.getPayments().subscribe({
+      next: data => this.payments = data
+    });
+  }
+}
+
+===== FILE: src\app\features\user\messages\messages.component.html =====
+<p>messages works!</p>
+
+===== FILE: src\app\features\user\messages\messages.component.scss =====
+
+===== FILE: src\app\features\user\messages\messages.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { MessagesComponent } from './messages.component';
+
+describe('MessagesComponent', () => {
+  let component: MessagesComponent;
+  let fixture: ComponentFixture<MessagesComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MessagesComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(MessagesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\messages\messages.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-messages',
+  standalone: true,
+  imports: [],
+  templateUrl: './messages.component.html',
+  styleUrl: './messages.component.scss'
+})
+export class MessagesComponent {
+
+}
+
+===== FILE: src\app\features\user\payments\payments.component.html =====
+<section class="payments-page">
+  <div class="hero">
+    <span>ESPACE CLIENT</span>
+    <h1>Mes paiements</h1>
+    <p>Historique de vos opÃ©rations.</p>
+  </div>
+
+  <div class="container">
+    <div *ngIf="loading" class="empty">Chargement...</div>
+    <div *ngIf="!loading && error" class="empty error">{{ error }}</div>
+
+    <div *ngIf="!loading && !payments.length" class="empty">
+      <h2>Aucun paiement</h2>
+      <p>Vos paiements apparaÃ®tront ici.</p>
+    </div>
+
+    <div class="table-card" *ngIf="!loading && payments.length">
+      <div class="payment" *ngFor="let payment of payments">
+        <div>
+          <strong>{{ payment.amount | number:'1.0-0' }} FCFA</strong>
+          <span>{{ payment.method }} Â· {{ payment.reference || 'Sans rÃ©fÃ©rence' }}</span>
+        </div>
+        <b>{{ payment.status }}</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+===== FILE: src\app\features\user\payments\payments.component.scss =====
+ .payments-page{min-height:100vh;background:#f7f8fc}
+.hero{padding:65px 7%;background:linear-gradient(135deg,#111827,#312e81);color:white}
+.hero span{font-size:12px;color:#c4b5fd;font-weight:800;letter-spacing:2px}
+.hero h1{font-size:45px;margin:12px 0}
+.hero p{color:#d1d5db}
+.container{max-width:1050px;margin:auto;padding:55px 25px}
+.table-card{background:white;border-radius:20px;padding:10px;border:1px solid #e5e7eb}
+.payment{display:flex;justify-content:space-between;align-items:center;padding:22px;border-bottom:1px solid #eee}
+.payment:last-child{border:0}
+.payment strong,.payment span{display:block}
+.payment span{color:#6b7280;margin-top:6px}
+.payment b{color:#7c3aed}
+.empty{text-align:center;background:white;border-radius:20px;padding:55px;color:#6b7280}
+
+===== FILE: src\app\features\user\payments\payments.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PaymentsComponent } from './payments.component';
+
+describe('PaymentsComponent', () => {
+  let component: PaymentsComponent;
+  let fixture: ComponentFixture<PaymentsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PaymentsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PaymentsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\payments\payments.component.ts =====
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Payment, PaymentService } from '../../../core/services/payment.service';
+
+@Component({
+  selector: 'app-user-payments',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './payments.component.html',
+  styleUrl: './payments.component.scss'
+})
+export class PaymentsComponent implements OnInit {
+  payments: Payment[] = [];
+  loading = true;
+  error = '';
+
+  constructor(private service: PaymentService) {}
+
+  ngOnInit(): void {
+    this.service.getPayments().subscribe({
+      next: data => {
+        this.payments = data;
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Erreur paiements :', err);
+        this.error = err?.error?.detail ||
+          'Impossible de charger les paiements. VÃ©rifiez votre connexion.';
+        this.loading = false;
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\user\profile\profile.component.html =====
+<p>profile works!</p>
+
+===== FILE: src\app\features\user\profile\profile.component.scss =====
+
+===== FILE: src\app\features\user\profile\profile.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ProfileComponent } from './profile.component';
+
+describe('ProfileComponent', () => {
+  let component: ProfileComponent;
+  let fixture: ComponentFixture<ProfileComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ProfileComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ProfileComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\profile\profile.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [],
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss'
+})
+export class ProfileComponent {
+
+}
+
+===== FILE: src\app\features\user\reservations\reservations.component.html =====
+<section class="list-page">
+  <div class="list-hero">
+    <span>MDT ACADEMY</span>
+    <h1>Mes rÃ©servations</h1>
+    <p>Retrouvez toutes vos demandes de formation.</p>
+  </div>
+
+  <div class="list-container">
+    <div *ngIf="loading" class="empty">Chargement...</div>
+
+    <div *ngIf="!loading && error" class="empty error">{{ error }}</div>
+
+    <div *ngIf="!loading && !error && reservations.length === 0" class="empty">
+      <h2>Aucune rÃ©servation</h2>
+      <p>Vous n'avez encore rÃ©servÃ© aucune formation.</p>
+      <a routerLink="/formations" class="btn">DÃ©couvrir les formations</a>
+    </div>
+
+    <div class="cards" *ngIf="!loading && reservations.length">
+      <article class="reservation-card" *ngFor="let reservation of reservations">
+        <span class="status">{{ reservation.status }}</span>
+        <h2>{{ reservation.formationTitle }}</h2>
+        <p>ðŸ“… {{ reservation.date }}</p>
+        <p *ngIf="reservation.time">ðŸ• {{ reservation.time }}</p>
+        <p *ngIf="reservation.notes">{{ reservation.notes }}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+===== FILE: src\app\features\user\reservations\reservations.component.scss =====
+ .list-page{min-height:100vh;background:#f7f8fc}
+.list-hero{padding:65px 7%;background:linear-gradient(135deg,#111827,#312e81);color:white}
+.list-hero span{font-size:12px;color:#c4b5fd;font-weight:800;letter-spacing:2px}
+.list-hero h1{font-size:45px;margin:12px 0}
+.list-hero p{color:#d1d5db}
+.list-container{max-width:1100px;margin:auto;padding:55px 25px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.reservation-card{background:white;padding:25px;border-radius:18px;border:1px solid #e5e7eb;box-shadow:0 10px 30px #0000000a}
+.reservation-card h2{color:#111827}
+.reservation-card p{color:#6b7280}
+.status{display:inline-block;padding:7px 12px;border-radius:20px;background:#ede9fe;color:#6d28d9;font-size:12px;font-weight:800}
+.empty{text-align:center;background:white;border-radius:20px;padding:55px;color:#6b7280}
+.error{color:#b91c1c}
+.btn{display:inline-block;background:#7c3aed;color:white;padding:13px 20px;border-radius:10px;text-decoration:none;font-weight:800}
+
+===== FILE: src\app\features\user\reservations\reservations.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ReservationsComponent } from './reservations.component';
+
+describe('ReservationsComponent', () => {
+  let component: ReservationsComponent;
+  let fixture: ComponentFixture<ReservationsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReservationsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ReservationsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\reservations\reservations.component.ts =====
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import {
+  Reservation,
+  ReservationService
+} from '../../../core/services/reservation.service';
+
+@Component({
+  selector: 'app-reservations',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './reservations.component.html',
+  styleUrl: './reservations.component.scss'
+})
+export class ReservationsComponent implements OnInit {
+
+  reservations: Reservation[] = [];
+  loading = true;
+  error = '';
+
+  constructor(
+    private reservationService: ReservationService
+  ) {}
+
+  ngOnInit(): void {
+    this.reservationService.getReservations().subscribe({
+      next: reservations => {
+        this.reservations = reservations;
+        this.loading = false;
+      },
+      error: error => {
+        console.error('Erreur rÃ©servations:', error);
+        this.error = 'Impossible de charger vos rÃ©servations.';
+        this.loading = false;
+      }
+    });
+  }
+}
+
+===== FILE: src\app\features\user\settings\settings.component.html =====
+<p>settings works!</p>
+
+===== FILE: src\app\features\user\settings\settings.component.scss =====
+
+===== FILE: src\app\features\user\settings\settings.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SettingsComponent } from './settings.component';
+
+describe('SettingsComponent', () => {
+  let component: SettingsComponent;
+  let fixture: ComponentFixture<SettingsComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SettingsComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(SettingsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\features\user\settings\settings.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-settings',
+  standalone: true,
+  imports: [],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.scss'
+})
+export class SettingsComponent {
+
+}
+
+===== FILE: src\app\shared\layout\footer\footer.component.html =====
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="footer-brand">MISS DIGITAL <span>TECH</span></div>
+      <p>Lâ€™innovation au service de votre rÃ©ussite.</p>
+      <p>Dakar, SÃ©nÃ©gal</p>
+      <a href="mailto:contact.missdigital@gmail.com">contact.missdigital@gmail.com</a>
+    </div>
+
+    <div>
+      <h4>Navigation</h4>
+      <a routerLink="/">Accueil</a>
+      <a routerLink="/a-propos">Ã€ propos</a>
+      <a routerLink="/portfolio">Portfolio</a>
+      <a routerLink="/fondatrice">Fondatrice</a>
+      <a routerLink="/contact">Contact</a>
+      <a routerLink="/reserver">RÃ©server</a>
+    </div>
+
+    <div>
+      <h4>Nos pÃ´les</h4>
+      <a routerLink="/tech">MDT TECH</a>
+      <a routerLink="/com">MDT COM</a>
+      <a routerLink="/print">MDT PRINT</a>
+      <a routerLink="/media">MDT MEDIA</a>
+      <a routerLink="/academy">MDT ACADEMY</a>
+      <a routerLink="/equip">MDT EQUIP</a>
+    </div>
+
+    <div>
+      <h4>Formation et espace</h4>
+      <a routerLink="/formations">Nos formations</a>
+      <a routerLink="/login">Connexion</a>
+      <a routerLink="/register">CrÃ©er un compte</a>
+      <a href="https://wa.me/221767421735" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      <a href="https://www.linkedin.com/in/saly-e" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://www.tiktok.com/@miss_breche4" target="_blank" rel="noopener noreferrer">TikTok</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    Â© 2026 Miss Digital Tech â€” Tous droits rÃ©servÃ©s.
+  </div>
+</footer>
+
+===== FILE: src\app\shared\layout\footer\footer.component.scss =====
+.footer {
+  background: #080808;
+  color: white;
+  padding-top: 70px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 60px;
+}
+
+.footer-brand {
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+}
+
+.footer-brand span {
+  color: var(--mdt-gold);
+}
+
+.footer p {
+  color: #888;
+  margin-top: 15px;
+}
+
+.footer h4 {
+  color: var(--mdt-gold);
+  margin-bottom: 20px;
+}
+
+.footer a {
+  display: block;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.footer a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid #222;
+  padding: 25px;
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+}
+
+===== FILE: src\app\shared\layout\footer\footer.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FooterComponent } from './footer.component';
+
+describe('FooterComponent', () => {
+  let component: FooterComponent;
+  let fixture: ComponentFixture<FooterComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FooterComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(FooterComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\layout\footer\footer.component.ts =====
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-footer',
+  standalone: true,
+  imports: [RouterLink],
+  templateUrl: './footer.component.html',
+  styleUrl: './footer.component.scss'
+})
+export class FooterComponent {}
+
+===== FILE: src\app\shared\layout\navbar\navbar.component.html =====
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a routerLink="/" class="brand-link" aria-label="Miss Digital Tech - Accueil">
+      <img src="/images/OGLogoMDT.png" alt="Logo Miss Digital Tech">
+    </a>
+  </div>
+
+  <div class="navbar-links">
+    <a routerLink="/">Accueil</a>
+    <a routerLink="/a-propos">Ã€ propos</a>
+    <a routerLink="/tech">MDT Tech</a>
+    <a routerLink="/com">MDT Com</a>
+    <a routerLink="/print">MDT Print</a>
+    <a routerLink="/media">MDT Media</a>
+    <a routerLink="/academy">MDT Academy</a>
+    <a routerLink="/equip">MDT Equip</a>
+    <a routerLink="/formations">Formations</a>
+    <a routerLink="/portfolio">Portfolio</a>
+    <a routerLink="/fondatrice">Fondatrice</a>
+    <a routerLink="/contact">Contact</a>
+    <a routerLink="/reserver">RÃ©server</a>
+
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/espace-client/reservations">Mes rÃ©servations</a>
+      <button type="button" (click)="goToDashboard()">Mon espace</button>
+      <button type="button" (click)="logout()">DÃ©connexion</button>
+    } @else {
+      <a routerLink="/login">Connexion</a>
+      <a routerLink="/register">Inscription</a>
+    }
+  </div>
+</nav>
+
+===== FILE: src\app\shared\layout\navbar\navbar.component.scss =====
+.navbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem 2rem;
+  box-sizing: border-box;
+}
+
+.navbar-brand a {
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.navbar-links a {
+  text-decoration: none;
+}
+
+.navbar-links button {
+  border: 0;
+  padding: .65rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.navbar-brand .brand-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.navbar-brand img {
+  display: block;
+  width: auto;
+  height: 48px;
+  max-width: 170px;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: .75rem 1rem;
+    gap: .75rem;
+  }
+
+  .navbar-brand img {
+    height: 40px;
+    max-width: 140px;
+  }
+
+  .navbar-links {
+    gap: .65rem;
+  }
+}
+
+===== FILE: src\app\shared\layout\navbar\navbar.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { NavbarComponent } from './navbar.component';
+
+describe('NavbarComponent', () => {
+  let component: NavbarComponent;
+  let fixture: ComponentFixture<NavbarComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NavbarComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(NavbarComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\layout\navbar\navbar.component.ts =====
+import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+
+@Component({
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [RouterLink],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss'
+})
+export class NavbarComponent {
+  constructor(
+    public auth: AuthService,
+    private router: Router
+  ) {}
+
+  logout(): void {
+    this.auth.logout();
+  }
+
+  goToDashboard(): void {
+    if (this.auth.isAdmin()) {
+      this.router.navigate(['/admin/dashboard']);
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+}
+
+===== FILE: src\app\shared\layout\sidebar\sidebar.component.html =====
+<p>sidebar works!</p>
+
+===== FILE: src\app\shared\layout\sidebar\sidebar.component.scss =====
+
+===== FILE: src\app\shared\layout\sidebar\sidebar.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SidebarComponent } from './sidebar.component';
+
+describe('SidebarComponent', () => {
+  let component: SidebarComponent;
+  let fixture: ComponentFixture<SidebarComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SidebarComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(SidebarComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\layout\sidebar\sidebar.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [],
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.scss'
+})
+export class SidebarComponent {
+
+}
+
+===== FILE: src\app\shared\ui\button\button.component.html =====
+<p>button works!</p>
+
+===== FILE: src\app\shared\ui\button\button.component.scss =====
+
+===== FILE: src\app\shared\ui\button\button.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ButtonComponent } from './button.component';
+
+describe('ButtonComponent', () => {
+  let component: ButtonComponent;
+  let fixture: ComponentFixture<ButtonComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ButtonComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ButtonComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\ui\button\button.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-button',
+  standalone: true,
+  imports: [],
+  templateUrl: './button.component.html',
+  styleUrl: './button.component.scss'
+})
+export class ButtonComponent {
+
+}
+
+===== FILE: src\app\shared\ui\card\card.component.html =====
+<p>card works!</p>
+
+===== FILE: src\app\shared\ui\card\card.component.scss =====
+
+===== FILE: src\app\shared\ui\card\card.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { CardComponent } from './card.component';
+
+describe('CardComponent', () => {
+  let component: CardComponent;
+  let fixture: ComponentFixture<CardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CardComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(CardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\ui\card\card.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-card',
+  standalone: true,
+  imports: [],
+  templateUrl: './card.component.html',
+  styleUrl: './card.component.scss'
+})
+export class CardComponent {
+
+}
+
+===== FILE: src\app\shared\ui\modal\modal.component.html =====
+<p>modal works!</p>
+
+===== FILE: src\app\shared\ui\modal\modal.component.scss =====
+
+===== FILE: src\app\shared\ui\modal\modal.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ModalComponent } from './modal.component';
+
+describe('ModalComponent', () => {
+  let component: ModalComponent;
+  let fixture: ComponentFixture<ModalComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ModalComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ModalComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\ui\modal\modal.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-modal',
+  standalone: true,
+  imports: [],
+  templateUrl: './modal.component.html',
+  styleUrl: './modal.component.scss'
+})
+export class ModalComponent {
+
+}
+
+===== FILE: src\app\shared\ui\notification\notification.component.html =====
+<p>notification works!</p>
+
+===== FILE: src\app\shared\ui\notification\notification.component.scss =====
+
+===== FILE: src\app\shared\ui\notification\notification.component.spec.ts =====
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { NotificationComponent } from './notification.component';
+
+describe('NotificationComponent', () => {
+  let component: NotificationComponent;
+  let fixture: ComponentFixture<NotificationComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NotificationComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(NotificationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+===== FILE: src\app\shared\ui\notification\notification.component.ts =====
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-notification',
+  standalone: true,
+  imports: [],
+  templateUrl: './notification.component.html',
+  styleUrl: './notification.component.scss'
+})
+export class NotificationComponent {
+
+}
+
+===== FILE: src\environments\environment.prod.ts =====
+export const environment = {
+  production: true,
+  apiUrl: 'https://miss-digital.onrender.com/api'
+};
+
+===== FILE: src\environments\environment.ts =====
+export const environment = {
+  production: false,
+  apiUrl: 'http://127.0.0.1:8000/api'
+};
+
