@@ -102,6 +102,29 @@
           </button>
 
           <div *ngIf="success" class="success">{{ success }}</div>
+
+          <div *ngIf="reservationId !== null && formation.price > 0" class="payment-choice">
+            <h3>Choisir un moyen de paiement</h3>
+            <p>Montant : <strong>{{ formation.price | number:'1.0-0' }} FCFA</strong></p>
+
+            <label for="paymentMethod">Moyen de paiement</label>
+            <select id="paymentMethod" name="paymentMethod" [(ngModel)]="paymentMethod">
+              <option value="wave">Wave</option>
+              <option value="orange_money">Orange Money</option>
+            </select>
+
+            <button type="button" class="btn-primary full"
+              [disabled]="paymentSubmitting"
+              (click)="preparerPaiement()">
+              {{ paymentSubmitting ? 'Enregistrement...' : 'Continuer vers le paiement' }}
+            </button>
+
+            <p *ngIf="paymentMessage" class="success">{{ paymentMessage }}</p>
+            <p *ngIf="paymentError" class="form-error">{{ paymentError }}</p>
+          </div>
+          <div *ngIf="reservationId !== null && formation.price <= 0" class="success">
+            Cette formation est gratuite. Votre réservation est enregistrée, aucun paiement n'est nécessaire.
+          </div>
           <div *ngIf="error" class="form-error">{{ error }}</div>
 
         </form>

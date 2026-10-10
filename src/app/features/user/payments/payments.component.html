@@ -7,6 +7,7 @@
 
   <div class="container">
     <div *ngIf="loading" class="empty">Chargement...</div>
+    <div *ngIf="!loading && error" class="empty error">{{ error }}</div>
 
     <div *ngIf="!loading && !payments.length" class="empty">
       <h2>Aucun paiement</h2>

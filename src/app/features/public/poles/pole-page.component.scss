@@ -1,0 +1,24 @@
+:host { display: block; color: #202020; }
+.pole-container { width: min(1120px, 90%); margin: auto; }
+.pole-hero { padding: 90px 0 80px; background: linear-gradient(135deg, #10151d, #242a32); color: white; }
+.back-link { display: inline-block; margin-bottom: 42px; color: #f0c674; text-decoration: none; }
+.eyebrow { display: block; color: #b88a38; font-size: .78rem; font-weight: 800; letter-spacing: .16em; margin-bottom: 18px; }
+.pole-hero .eyebrow { color: #f0c674; }
+h1 { max-width: 850px; font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: 1.08; margin: 0 0 24px; }
+.lead { max-width: 720px; font-size: 1.12rem; line-height: 1.8; color: #e0e2e5; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.btn { display: inline-block; padding: 14px 22px; border-radius: 5px; text-decoration: none; font-weight: 700; }
+.primary { background: #c49a4a; color: #171717; }
+.secondary { border: 1px solid #d4b16e; color: white; }
+.pole-section { padding: 76px 0; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.2; margin: 0 0 18px; }
+.section-intro { max-width: 700px; line-height: 1.8; color: #666; margin-bottom: 32px; }
+.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 20px; margin-top: 34px; }
+.service-card { padding: 26px; border: 1px solid #e8e4dc; border-radius: 10px; background: #fff; }
+.service-number { color: #b88a38; font-weight: 800; }
+.service-card h3 { margin: 16px 0 10px; }
+.service-card p { color: #666; line-height: 1.65; }
+.service-card a { color: #78571c; font-weight: 700; text-decoration: none; }
+.pole-cta { padding: 65px 0; background: #f6f3ed; }
+.pole-cta p { line-height: 1.7; margin-bottom: 25px; }
+@media (max-width: 600px) { .pole-hero { padding: 55px 0; } .back-link { margin-bottom: 28px; } }

@@ -23,7 +23,7 @@ export class NavbarComponent {
     if (this.auth.isAdmin()) {
       this.router.navigate(['/admin/dashboard']);
     } else {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/espace-client/dashboard']);
     }
   }
 }

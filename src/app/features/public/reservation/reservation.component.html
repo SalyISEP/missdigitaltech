@@ -1,1 +1,58 @@
-<p>reservation works!</p>
+<section class="reservation-page section">
+  <div class="container reservation-container">
+    <header class="reservation-heading">
+      <span class="section-label">MDT ACADEMY</span>
+      <h1>Réserver une <span class="gold">formation</span></h1>
+      <p>Choisissez votre formation et vos disponibilités. Notre équipe pourra ensuite vous recontacter.</p>
+    </header>
+
+    <div class="reservation-card">
+      @if (loading) {
+        <p class="reservation-info">Chargement des formations...</p>
+      } @else {
+        @if (error) {
+          <p class="reservation-message reservation-error" role="alert">{{ error }}</p>
+        }
+
+        @if (success) {
+          <p class="reservation-message reservation-success" role="status">{{ success }}</p>
+          <p class="reservation-next">Vous pouvez consulter vos demandes dans votre espace client.</p>
+          <a routerLink="/espace-client/reservations" class="btn btn-primary">Mes réservations</a>
+        }
+
+        @if (formations.length > 0) {
+          <form (ngSubmit)="reserver()">
+            <label for="formation">Formation souhaitée <span>*</span></label>
+            <select id="formation" name="formation" [(ngModel)]="formationId" required>
+              <option [ngValue]="null" disabled>Choisir une formation</option>
+              @for (formation of formations; track formation.id) {
+                <option [ngValue]="formation.id">
+                  {{ formation.title }} — {{ formation.price | number }} FCFA
+                </option>
+              }
+            </select>
+
+            <label for="date">Date souhaitée <span>*</span></label>
+            <input id="date" name="date" type="date" [(ngModel)]="date"
+                   [min]="minDate" required />
+
+            <label for="time">Heure souhaitée</label>
+            <input id="time" name="time" type="time" [(ngModel)]="time" />
+
+            <label for="notes">Précisions complémentaires</label>
+            <textarea id="notes" name="notes" [(ngModel)]="notes"
+                      rows="4" maxlength="1000"
+                      placeholder="Vos questions ou préférences (facultatif)"></textarea>
+
+            <button type="submit" class="btn btn-primary reservation-submit"
+                    [disabled]="submitting || loading">
+              {{ submitting ? 'Envoi en cours...' : 'Envoyer ma demande' }}
+            </button>
+          </form>
+        }
+      }
+
+      <p class="reservation-back"><a routerLink="/formations">← Voir toutes les formations</a></p>
+    </div>
+  </div>
+</section>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
@@ -24,7 +24,8 @@ export class RegisterComponent {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private notifications: NotificationService
+    private notifications: NotificationService,
+    private route: ActivatedRoute
   ) {}
 
   submit(): void {
@@ -67,7 +68,7 @@ export class RegisterComponent {
           'Inscription réussie. Vous pouvez maintenant vous connecter.'
         );
 
-        this.router.navigate(['/connexion']);
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.route.snapshot.queryParamMap.get('returnUrl') || '/espace-client/dashboard' } });
       },
       error: error => {
         this.loading = false;

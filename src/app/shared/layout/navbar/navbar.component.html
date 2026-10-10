@@ -7,20 +7,17 @@
 
   <div class="navbar-links">
     <a routerLink="/">Accueil</a>
+    <a routerLink="/a-propos">À propos</a>
     <a routerLink="/formations">Formations</a>
-    <a routerLink="/expertises">Expertises</a>
     <a routerLink="/portfolio">Portfolio</a>
     <a routerLink="/fondatrice">Fondatrice</a>
     <a routerLink="/contact">Contact</a>
+    <a routerLink="/reserver">Réserver</a>
 
     @if (auth.isLoggedIn()) {
-      <button type="button" (click)="goToDashboard()">
-        Mon espace
-      </button>
-
-      <button type="button" (click)="logout()">
-        Déconnexion
-      </button>
+      <a routerLink="/espace-client/reservations">Mes réservations</a>
+      <button type="button" (click)="goToDashboard()">Mon espace</button>
+      <button type="button" (click)="logout()">Déconnexion</button>
     } @else {
       <a routerLink="/login">Connexion</a>
       <a routerLink="/register">Inscription</a>

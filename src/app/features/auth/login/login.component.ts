@@ -16,12 +16,16 @@ export class LoginComponent {
   password = '';
   error = '';
   loading = false;
+  registerQueryParams: { returnUrl?: string } = {};
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) this.registerQueryParams = { returnUrl };
+  }
 
   submit(): void {
     this.login();

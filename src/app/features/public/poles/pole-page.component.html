@@ -1,0 +1,36 @@
+<section class="pole-hero" *ngIf="pole">
+  <div class="pole-container">
+    <a routerLink="/" class="back-link">← Retour à l’accueil</a>
+    <span class="eyebrow">{{ pole.name }} · PÔLE {{ pole.number }}</span>
+    <h1>{{ pole.title }}</h1>
+    <p class="lead">{{ pole.intro }}</p>
+    <div class="actions">
+      <a routerLink="/contact" class="btn primary">Parler de votre projet</a>
+      <a routerLink="/reserver" class="btn secondary" *ngIf="pole.name === 'MDT ACADEMY'">Réserver une formation</a>
+    </div>
+  </div>
+</section>
+
+<section class="pole-section" *ngIf="pole">
+  <div class="pole-container">
+    <span class="eyebrow">NOS SOLUTIONS</span>
+    <h2>Comment pouvons-nous vous accompagner ?</h2>
+    <p class="section-intro">Découvrez les services proposés par {{ pole.name }}. Contactez-nous pour adapter la solution à vos besoins.</p>
+    <div class="service-grid">
+      <article class="service-card" *ngFor="let service of pole.services; let i = index">
+        <span class="service-number">{{ (i + 1).toString().padStart(2, '0') }}</span>
+        <h3>{{ service }}</h3>
+        <p>Une solution pensée selon votre projet, vos besoins et vos objectifs.</p>
+        <a routerLink="/contact">Demander des informations →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="pole-cta" *ngIf="pole">
+  <div class="pole-container">
+    <h2>Construisons la suite ensemble.</h2>
+    <p>Présentez-nous votre besoin et nous étudierons la solution la plus adaptée.</p>
+    <a routerLink="/contact" class="btn primary">Contacter Miss Digital Tech</a>
+  </div>
+</section>

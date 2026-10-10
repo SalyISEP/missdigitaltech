@@ -8,7 +8,7 @@ export interface Formation {
   title: string;
   description: string;
   category: string;
-  price: string;
+  price: number;
   duration: string;
   image: string;
   available: boolean;

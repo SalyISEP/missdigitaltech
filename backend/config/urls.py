@@ -41,6 +41,11 @@ urlpatterns = [
     ),
 
     path(
+        "api/contact/",
+        include("contact_requests.urls")
+    ),
+
+    path(
         "api/messages/",
         include("messages_app.urls")
     ),

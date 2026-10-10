@@ -23,12 +23,13 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3ng6@(g7d&m6c8je9rkw4yn%&a*1-nqp#v2d!j=dfvzc09e%-5'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
+if not SECRET_KEY:
+    raise ValueError('DJANGO_SECRET_KEY doit être définie dans les variables d’environnement.')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'reservations',
     'payments',
     'messages_app',
+    'contact_requests',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,13 +164,11 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
+    'https://missdigitaltech.web.app',
     'http://localhost:4200',
     'http://127.0.0.1:4200',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]

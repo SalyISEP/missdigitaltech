@@ -3,6 +3,12 @@ import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
+  { path: 'tech', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'tech' } },
+  { path: 'com', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'com' } },
+  { path: 'print', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'print' } },
+  { path: 'media', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'media' } },
+  { path: 'academy', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'academy' } },
+  { path: 'equip', loadComponent: () => import('./features/public/poles/pole-page.component').then(m => m.PolePageComponent), data: { pole: 'equip' } },
   {
     path: '',
     loadComponent: () =>
@@ -57,6 +63,8 @@ export const routes: Routes = [
       import('./features/public/formations/formation-detail/formation-detail.component')
         .then(m => m.FormationDetailComponent)
   },
+  { path: 'reserver', canActivate: [authGuard], loadComponent: () => import('./features/public/reservation/reservation.component').then(m => m.ReservationComponent) },
+
   {
     path: 'login',
     loadComponent: () =>

@@ -14,8 +14,8 @@ export interface Payment {
 }
 
 export interface PaymentData {
-  amount: string;
-  method: string;
+  reservation: number;
+  method: 'wave' | 'orange_money';
   reference?: string;
 }
 

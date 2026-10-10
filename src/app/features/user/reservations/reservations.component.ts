@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import {
   Reservation,
   ReservationService
@@ -8,7 +9,7 @@ import {
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.scss'
 })
